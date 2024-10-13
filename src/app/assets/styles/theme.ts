@@ -27,14 +27,59 @@ const components = {
   },
 
   Button: {
-    baseStyle: {
-      _disabled: {
-        bg: "#aaa",
-        opacity: 1,
-        color: "#fff",
+    variants: {
+      primary: {
+        bg: "brand.primary",
+        color: "brand.white",
         _hover: {
-          bg: "#aaa",
-          color: "#fff",
+          bg: "brand.primaryDark",
+        },
+        _disabled: {
+          _hover: {
+            bg: "#4b0082 !important",
+          },
+        },
+      },
+      black: {
+        bg: "brand.secondary",
+        color: "brand.white",
+        borderRadius: "24px",
+      },
+      light: {
+        bg: "#F8F8F8",
+        color: "brand.black",
+        _hover: {
+          bg: "#EBEBEB",
+        },
+      },
+      outline: {
+        border: "1px solid",
+        borderColor: "brand.black",
+        borderRadius: "24px",
+      },
+      outlineDashed: {
+        border: "2px dashed",
+        borderColor: "brand.black",
+        borderRadius: "24px",
+      },
+      success: {
+        bg: "brand.success",
+        borderRadius: "8px",
+        color: "brand.white",
+        _hover: {
+          bg: "brand.successDark",
+        },
+      },
+      danger: {
+        bg: "brand.danger",
+        color: "brand.white",
+        _hover: {
+          bg: "brand.dangerDark",
+        },
+        _disabled: {
+          _hover: {
+            bg: "#DE1135 !important",
+          },
         },
       },
     },
@@ -54,6 +99,7 @@ const theme = extendTheme({
   colors: {
     brand: {
       primary: "#4b0082",
+      white: "#fff",
       greyText: "#4D4D4D",
       primaryTint: "#F2F4FE",
       primaryTintX: "#DBCCE6",

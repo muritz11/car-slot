@@ -7,8 +7,8 @@ export async function POST(req) {
   try {
     await connectDB();
 
-    const { fullName, email, password } = await req.json();
-    console.log(email, fullName, password);
+    const { fullName, email, userType, password } = await req.json();
+    console.log(email, fullName, userType, password);
     const exists = await User.findOne({ $or: [{ email }] });
     if (exists) {
       return NextResponse.json(
@@ -19,7 +19,12 @@ export async function POST(req) {
       );
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    await User.create({ email, fullName, password: hashedPassword });
+    await User.create({
+      email,
+      fullName,
+      isAdmin: userType === "admin" ? true : false,
+      password: hashedPassword,
+    });
     return NextResponse.json({ message: "User registered" }, { status: 201 });
   } catch (error) {
     console.log("Error while registering user", error);

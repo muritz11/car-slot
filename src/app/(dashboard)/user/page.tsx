@@ -1,10 +1,9 @@
-import SignoutButton from "../../components/SignoutButton";
+import ComingSoon from "@/app/components/ComingSoon";
 
 const User = () => {
   return (
     <div>
-      <h1>User dash</h1>
-      <SignoutButton />
+      <ComingSoon />
     </div>
   );
 };

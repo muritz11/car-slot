@@ -121,7 +121,7 @@ export default function Header({ isPurple = false }: { isPurple?: boolean }) {
                     </Button>
                     <Button
                       as={Link}
-                      href="/signup"
+                      href="/register"
                       width={"110px"}
                       fontWeight={400}
                       color={"white"}
@@ -210,7 +210,7 @@ export default function Header({ isPurple = false }: { isPurple?: boolean }) {
                 </Button>
                 <Button
                   as={Link}
-                  href="/signup"
+                  href="/register"
                   width={"110px"}
                   fontWeight={400}
                   color={isPurple ? "brand.primary" : "white"}

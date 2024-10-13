@@ -1,7 +1,12 @@
 "use client";
+import { Flex, Box, Heading, Image, Text, Button } from "@chakra-ui/react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Logo from "../../assets/images/img.jpg";
+import { Link } from "@chakra-ui/next-js";
+import CustomInput from "../../../../utils/CustomInput";
+import { showError } from "../../../../utils/Alerts";
 
 const Login = () => {
   const router = useRouter();
@@ -21,8 +26,8 @@ const Login = () => {
     e.preventDefault();
     const { email, password } = formState;
 
-    if (!email && !password) {
-      alert("Empty input fields!!");
+    if (!email || !password) {
+      showError("All fields are required");
       return;
     }
 
@@ -36,7 +41,8 @@ const Login = () => {
 
       if (res?.error) {
         setIsLoading(false);
-        alert("Invalid credentials");
+        console.log(res);
+        showError("Invalid credentials");
         return;
       }
 
@@ -45,29 +51,83 @@ const Login = () => {
     } catch (error) {
       setIsLoading(false);
       console.log(error);
-      alert("Something went wrong");
+      showError("Something went wrong");
     }
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <h1>Login</h1>
-        <input
-          type="email"
-          placeholder="Enter Email"
-          name="email"
-          onChange={handleInputs}
-        />
-        <input
-          type="password"
-          placeholder="Enter Password"
-          name="password"
-          onChange={handleInputs}
-        />
-        <button>{isLoading ? "Loading..." : "Submit"}</button>
-      </form>
-    </div>
+    <Flex justify={"center"} align={"center"} minH={"100vh"}>
+      <Box width={{ base: "90%", md: "550px" }} py={"50px"} mt={"40px"}>
+        <Flex
+          position={"absolute"}
+          top={"15px"}
+          left={["10px", "40px"]}
+          align={"center"}
+        >
+          <Image
+            // @ts-ignore
+            src={Logo}
+            height={"50px"}
+            alt="logo"
+          />
+        </Flex>
+        <Box my="32px">
+          <Heading
+            as={"h2"}
+            fontSize="24px"
+            fontWeight={700}
+            textAlign={"center"}
+          >
+            Login
+          </Heading>
+          <Text textAlign={"center"} mt={"8px"}>
+            {"Enter your info below to login"}
+          </Text>
+        </Box>
+
+        {/* main */}
+        <form onSubmit={handleSubmit}>
+          <CustomInput
+            label="Your email"
+            name="email"
+            type="email"
+            value={formState.email}
+            onChange={handleInputs}
+            mb="13px"
+          />
+          <CustomInput
+            label="Password"
+            name="password"
+            type="password"
+            value={formState.password}
+            onChange={handleInputs}
+            mb="13px"
+          />
+          <Button
+            type="submit"
+            variant={"primary"}
+            mt={"29px"}
+            w={"full"}
+            height={"48px"}
+            fontWeight={500}
+            isLoading={isLoading}
+            rounded="8px"
+          >
+            Sign in
+          </Button>
+          <Button
+            variant={"ghost"}
+            as={Link}
+            href={"/register"}
+            w={"full"}
+            fontWeight={500}
+            _hover={{ bg: "transparent" }}
+          >
+            Don't have an account? Sign up
+          </Button>
+        </form>
+      </Box>
+    </Flex>
   );
 };
 

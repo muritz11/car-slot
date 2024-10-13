@@ -1,14 +1,25 @@
 "use client";
+import { Flex, Box, Heading, Button, Text, Image } from "@chakra-ui/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Logo from "../../assets/images/img.jpg";
+import CustomInput from "../../../../utils/CustomInput";
+import { showError, showSuccess } from "../../../../utils/Alerts";
+import CustomMenu, { MenuItemsObj } from "../../../../utils/CustomMenu";
 
 const Register = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [userTypeItemsArr] = useState<MenuItemsObj[]>([
+    { label: "User", value: "user" },
+    { label: "Admin", value: "admin" },
+  ]);
   const [formState, setFormState] = useState({
     fullName: "",
     email: "",
     password: "",
+    userType: "",
   });
 
   const handleInputs = (e: any) => {
@@ -20,8 +31,13 @@ const Register = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    if (!formState.email && !formState.fullName && !formState.password) {
-      alert("Empty input fields!!");
+    if (!formState.email || !formState.fullName || !formState.password) {
+      showError("All fields are required");
+      return;
+    }
+
+    if (!formState.userType) {
+      showError("Select user type");
       return;
     }
 
@@ -38,45 +54,114 @@ const Register = () => {
       if (res.ok) {
         const form = e.target;
         form.reset();
-        alert("user registered");
+        showSuccess("user registered");
         router.push("/login");
       } else {
         const err = await res.json();
-        alert(`Something went wrong: ${err.message}`);
+        showError(`${err.message}`);
       }
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
       console.log(error);
-      alert("Something went wrong");
+      showError("Something went wrong");
     }
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <h1>Register</h1>
-        <input
-          type="text"
-          placeholder="Enter Name"
-          name="fullName"
-          onChange={handleInputs}
-        />
-        <input
-          type="email"
-          placeholder="Enter Email"
-          name="email"
-          onChange={handleInputs}
-        />
-        <input
-          type="password"
-          placeholder="Enter Password"
-          name="password"
-          onChange={handleInputs}
-        />
-        <button>{isLoading ? "Loading..." : "Submit"}</button>
-      </form>
-    </div>
+    <Flex justify={"center"} align={"center"} minH={"100vh"}>
+      <Box width={{ base: "90%", md: "550px" }} py={"50px"} mt={"40px"}>
+        <Flex
+          position={"absolute"}
+          top={"15px"}
+          left={["10px", "40px"]}
+          align={"center"}
+        >
+          <Image
+            // @ts-ignore
+            src={Logo}
+            height={"50px"}
+            alt="logo"
+          />
+        </Flex>
+        <Box my="32px">
+          <Heading
+            as={"h2"}
+            fontSize="24px"
+            fontWeight={700}
+            textAlign={"center"}
+          >
+            Sign up
+          </Heading>
+          <Text textAlign={"center"} mt={"8px"}>
+            {"Enter your info below to signup"}
+          </Text>
+        </Box>
+
+        {/* main */}
+        <form onSubmit={handleSubmit}>
+          <CustomInput
+            label="Your name"
+            name="fullName"
+            type="text"
+            value={formState.fullName}
+            onChange={handleInputs}
+            mb="13px"
+          />
+          <CustomInput
+            label="Your email"
+            name="email"
+            type="email"
+            value={formState.email}
+            onChange={handleInputs}
+            mb="13px"
+          />
+          <CustomInput
+            label="Password"
+            name="password"
+            type="password"
+            value={formState.password}
+            onChange={handleInputs}
+            mb="13px"
+          />
+          <Box>
+            <Text fontWeight={500} mb={2}>
+              User type
+            </Text>
+            <CustomMenu
+              value={formState.userType}
+              items={userTypeItemsArr}
+              placeholder="Select user type"
+              setValue={(val) => {
+                setFormState({ ...formState, userType: val });
+              }}
+            />
+          </Box>
+          <Button
+            type="submit"
+            variant={"primary"}
+            mt={"29px"}
+            w={"full"}
+            height={"48px"}
+            fontWeight={500}
+            isLoading={isLoading}
+            rounded="8px"
+          >
+            Sign up
+          </Button>
+          <Button
+            variant={"ghost"}
+            as={Link}
+            href={"/login"}
+            w={"full"}
+            fontWeight={500}
+            _hover={{ bg: "transparent" }}
+          >
+            Already have an account? Sign in
+          </Button>
+        </form>
+      </Box>
+    </Flex>
   );
 };
 
