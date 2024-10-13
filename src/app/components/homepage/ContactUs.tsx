@@ -1,26 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import {
-  Box,
-  Flex,
-  Heading,
-  InputGroup,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalOverlay,
-  Stack,
-  Text,
-  Textarea,
-  useDisclosure,
-  useToast,
-  Image,
-  VStack,
-  ModalCloseButton,
-  Icon,
-} from "@chakra-ui/react";
-// import Check from '../assets/partners/apptCheck.svg'
-import Check from "../../assets/images/img.jpg";
+import { Box, Flex, Heading, Text, VStack, Icon } from "@chakra-ui/react";
 import { HiMail } from "react-icons/hi";
 import { BsTelephoneFill } from "react-icons/bs";
 
