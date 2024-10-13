@@ -3,7 +3,6 @@ import { Flex, Box, Heading, Image, Text, Button } from "@chakra-ui/react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Logo from "../../assets/images/img.jpg";
 import { Link } from "@chakra-ui/next-js";
 import CustomInput from "../../../../utils/CustomInput";
 import { showError } from "../../../../utils/Alerts";
@@ -65,10 +64,10 @@ const Login = () => {
           align={"center"}
         >
           <Image
-            // @ts-ignore
-            src={Logo}
-            height={"50px"}
-            alt="logo"
+            objectFit="contain"
+            src={"/logo.jpg"}
+            width={"60px"}
+            alt="Logo"
           />
         </Flex>
         <Box my="32px">

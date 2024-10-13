@@ -3,7 +3,6 @@ import ContactUs from "./components/homepage/ContactUs";
 import CallToAction from "./components/homepage/CTA";
 import GetStarted from "./components/homepage/GetStarted";
 import Hero from "./components/homepage/Hero";
-import PopularOrganization from "./components/homepage/PopularOrganization";
 import Testimonial from "./components/homepage/Testimonial";
 import WhyPorts from "./components/homepage/WhyPorts";
 import Header from "./components/Header";

@@ -16,7 +16,6 @@ import {
   DrawerOverlay,
   VStack,
 } from "@chakra-ui/react";
-import Logo from "../assets/images/img.jpg";
 import { Link } from "@chakra-ui/next-js";
 import { HiMenuAlt3 } from "react-icons/hi";
 
@@ -52,8 +51,12 @@ export default function Header({ isPurple = false }: { isPurple?: boolean }) {
             >
               <Flex justify="center" align="center">
                 <Link href="/">
-                  {/* @ts-ignore */}
-                  <Image objectFit="contain" src={Logo} alt="Logo" />
+                  <Image
+                    objectFit="contain"
+                    src={"/logo.jpg"}
+                    width={"60px"}
+                    alt="Logo"
+                  />
                 </Link>
               </Flex>
 
@@ -175,7 +178,8 @@ export default function Header({ isPurple = false }: { isPurple?: boolean }) {
                   }}
                   objectFit="contain"
                   //   @ts-ignore
-                  src={Logo}
+                  src={"/logo.jpg"}
+                  width={"60px"}
                   alt="Logo"
                 />
               </Link>

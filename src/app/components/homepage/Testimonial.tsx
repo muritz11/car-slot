@@ -143,7 +143,7 @@ const FeaturesStats = [
   {
     color: "#325CE8",
     bg: "#F2F4FE",
-    title: "Main Savings",
+    title: "Main Saving",
     customerName: "John Doe",
     company: "Consultant Doctor",
     content: (
@@ -157,7 +157,7 @@ const FeaturesStats = [
   {
     color: "#325CE8",
     bg: "#F2F4FE",
-    title: "Main Savings",
+    title: "Main Savin",
     customerName: "John Doe",
     company: "Consultant Doctor",
     content: (

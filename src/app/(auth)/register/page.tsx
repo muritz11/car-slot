@@ -78,10 +78,10 @@ const Register = () => {
           align={"center"}
         >
           <Image
-            // @ts-ignore
-            src={Logo}
-            height={"50px"}
-            alt="logo"
+            objectFit="contain"
+            src={"/logo.jpg"}
+            width={"60px"}
+            alt="Logo"
           />
         </Flex>
         <Box my="32px">

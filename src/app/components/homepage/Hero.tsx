@@ -10,6 +10,7 @@ import {
   useColorModeValue,
   createIcon,
 } from "@chakra-ui/react";
+import { Link } from "@chakra-ui/next-js";
 
 export default function CallToActionWithAnnotation() {
   return (
@@ -20,6 +21,7 @@ export default function CallToActionWithAnnotation() {
           textAlign={"center"}
           spacing={{ base: 8, md: 14 }}
           py={{ base: 20, md: 36 }}
+          pt={{ base: "150px", md: 36 }}
         >
           <Heading
             fontWeight={600}
@@ -42,6 +44,8 @@ export default function CallToActionWithAnnotation() {
             position={"relative"}
           >
             <Button
+              as={Link}
+              href={"/login"}
               bg={"brand.primary"}
               color={"#fff"}
               rounded={"full"}
@@ -52,7 +56,13 @@ export default function CallToActionWithAnnotation() {
             >
               Book your spot
             </Button>
-            <Button variant={"link"} colorScheme={"blue"} size={"sm"}>
+            <Button
+              variant={"link"}
+              colorScheme={"blue"}
+              size={"sm"}
+              as={Link}
+              href={"/login"}
+            >
               Become a Space Provider
             </Button>
             <Box display={{ base: "none", md: "block" }}>
