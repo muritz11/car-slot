@@ -1,19 +1,27 @@
 "use client";
 import { Flex, Box, Heading, Image, Text, Button } from "@chakra-ui/react";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@chakra-ui/next-js";
 import CustomInput from "../../../../utils/CustomInput";
-import { showError } from "../../../../utils/Alerts";
+import { showError, showSuccess } from "../../../../utils/Alerts";
 
 const Login = () => {
   const router = useRouter();
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [formState, setFormState] = useState({
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    if (session?.user) {
+      // @ts-ignore
+      router.replace(`/${session?.user?.role}`);
+    }
+  }, [session]);
 
   const handleInputs = (e: any) => {
     const { value, name } = e.target;
@@ -45,8 +53,18 @@ const Login = () => {
         return;
       }
 
+      const sessionCheck = await fetch("api/auth/session", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const session = await sessionCheck.json();
+
+      // console.log("first", res);
+      showSuccess("Login successful. Redirect...");
       setIsLoading(false);
-      router.replace("/admin");
+      router.replace(`/${session?.user?.role}`);
     } catch (error) {
       setIsLoading(false);
       console.log(error);

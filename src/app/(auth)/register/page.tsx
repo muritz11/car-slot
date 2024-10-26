@@ -2,14 +2,16 @@
 import { Flex, Box, Heading, Button, Text, Image } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import Logo from "../../assets/images/img.jpg";
+import { useEffect, useState } from "react";
 import CustomInput from "../../../../utils/CustomInput";
 import { showError, showSuccess } from "../../../../utils/Alerts";
 import CustomMenu, { MenuItemsObj } from "../../../../utils/CustomMenu";
+import { testStrongPassword } from "../../../../utils/helpers";
+import { useSession } from "next-auth/react";
 
 const Register = () => {
   const router = useRouter();
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [userTypeItemsArr] = useState<MenuItemsObj[]>([
     { label: "User", value: "user" },
@@ -19,8 +21,16 @@ const Register = () => {
     fullName: "",
     email: "",
     password: "",
+    confirmPassword: "",
     userType: "",
   });
+
+  useEffect(() => {
+    if (session?.user) {
+      // @ts-ignore
+      router.replace(`/${session?.user?.role}`);
+    }
+  }, [session]);
 
   const handleInputs = (e: any) => {
     const { value, name } = e.target;
@@ -30,14 +40,32 @@ const Register = () => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    const { email, fullName, password, userType, confirmPassword } = formState;
 
-    if (!formState.email || !formState.fullName || !formState.password) {
+    if (!email || !fullName || !password) {
       showError("All fields are required");
       return;
     }
 
-    if (!formState.userType) {
+    if (!userType) {
       showError("Select user type");
+      return;
+    }
+
+    if (password.length < 6) {
+      showError("Password should be at least 6 characters");
+      return;
+    }
+
+    if (!testStrongPassword(password)) {
+      showError(
+        "Password must contain a capital letter, number and special character"
+      );
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      showError("Password does not match confirm password");
       return;
     }
 
@@ -54,7 +82,7 @@ const Register = () => {
       if (res.ok) {
         const form = e.target;
         form.reset();
-        showSuccess("user registered");
+        showSuccess("user registered. Redirecting...");
         router.push("/login");
       } else {
         const err = await res.json();
@@ -121,6 +149,14 @@ const Register = () => {
             name="password"
             type="password"
             value={formState.password}
+            onChange={handleInputs}
+            mb="13px"
+          />
+          <CustomInput
+            label="Confirm password"
+            type="password"
+            name="confirmPassword"
+            value={formState.confirmPassword}
             onChange={handleInputs}
             mb="13px"
           />

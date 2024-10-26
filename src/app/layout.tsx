@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import ClientSessionProvider from "../../utils/ClientSessionProvider";
 import "./assets/styles/globals.css";
 import { Providers } from "./Providers";
 
@@ -27,7 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Providers>{children}</Providers>
+        <ClientSessionProvider>
+          <Providers>{children}</Providers>
+        </ClientSessionProvider>
       </body>
     </html>
   );

@@ -18,10 +18,11 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/next-js";
 import { HiMenuAlt3 } from "react-icons/hi";
+import { useSession } from "next-auth/react";
 
 export default function Header({ isPurple = false }: { isPurple?: boolean }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const token = false;
+  const { data: session, status } = useSession();
 
   return (
     <>
@@ -105,50 +106,57 @@ export default function Header({ isPurple = false }: { isPurple?: boolean }) {
               </VStack>
 
               <Flex gap={2} mt={4}>
-                {!token ? (
-                  <>
-                    <Button
-                      as={Link}
-                      href="/login"
-                      variant={"outline"}
-                      width={"110px"}
-                      fontWeight={400}
-                      border={"1px"}
-                      borderColor={"brand.primary"}
-                      color={"brand.primary"}
-                      _hover={{
-                        bg: "brand.primaryTint",
-                      }}
-                    >
-                      Login
-                    </Button>
-                    <Button
-                      as={Link}
-                      href="/register"
-                      width={"110px"}
-                      fontWeight={400}
-                      color={"white"}
-                      bg={"brand.primary"}
-                      _hover={{
-                        bg: "brand.primary",
-                      }}
-                    >
-                      Sign up
-                    </Button>
-                  </>
+                {status === "loading" ? (
+                  <Box></Box>
                 ) : (
-                  <Button
-                    as={Link}
-                    href="/home"
-                    fontWeight={400}
-                    color={"white"}
-                    bg={"brand.primary"}
-                    _hover={{
-                      bg: "brand.primary",
-                    }}
-                  >
-                    My Dashboard
-                  </Button>
+                  <>
+                    {!session?.user ? (
+                      <>
+                        <Button
+                          as={Link}
+                          href="/login"
+                          variant={"outline"}
+                          width={"110px"}
+                          fontWeight={400}
+                          border={"1px"}
+                          borderColor={"brand.primary"}
+                          color={"brand.primary"}
+                          _hover={{
+                            bg: "brand.primaryTint",
+                          }}
+                        >
+                          Login
+                        </Button>
+                        <Button
+                          as={Link}
+                          href="/register"
+                          width={"110px"}
+                          fontWeight={400}
+                          color={"white"}
+                          bg={"brand.primary"}
+                          _hover={{
+                            bg: "brand.primary",
+                          }}
+                        >
+                          Sign up
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        as={Link}
+                        // @ts-ignore
+                        href={`/${session?.user?.role}`}
+                        fontWeight={400}
+                        color={"white"}
+                        bg={"brand.primary"}
+                        _hover={{
+                          bg: "brand.primary",
+                        }}
+                      >
+                        My Dashboard
+                      </Button>
+                    )}
+                  </>
                 )}
               </Flex>
             </DrawerBody>
@@ -195,51 +203,58 @@ export default function Header({ isPurple = false }: { isPurple?: boolean }) {
           </Flex>
 
           <Flex gap={2} display={{ base: "none", lg: "flex" }}>
-            {!token ? (
-              <>
-                <Button
-                  as={Link}
-                  href="/login"
-                  variant={"outline"}
-                  width={"110px"}
-                  fontWeight={400}
-                  border={"1px"}
-                  borderColor={isPurple ? "#fff" : "brand.primary"}
-                  color={isPurple ? "#fff" : "brand.primary"}
-                  _hover={{
-                    bg: isPurple ? "" : "brand.primaryTint",
-                  }}
-                >
-                  Login
-                </Button>
-                <Button
-                  as={Link}
-                  href="/register"
-                  width={"110px"}
-                  fontWeight={400}
-                  color={isPurple ? "brand.primary" : "white"}
-                  bg={isPurple ? "#fff" : "brand.primary"}
-                  _hover={{
-                    bg: isPurple ? "#e8e8e8" : "brand.primary",
-                  }}
-                >
-                  Sign up
-                </Button>
-              </>
+            {status === "loading" ? (
+              <Box></Box>
             ) : (
-              <Button
-                as={Link}
-                href="/home"
-                width={"110px"}
-                fontWeight={400}
-                color={isPurple ? "brand.primary" : "white"}
-                bg={isPurple ? "#fff" : "brand.primary"}
-                _hover={{
-                  bg: isPurple ? "#e8e8e8" : "brand.primary",
-                }}
-              >
-                Dashboard
-              </Button>
+              <>
+                {!session?.user ? (
+                  <>
+                    <Button
+                      as={Link}
+                      href="/login"
+                      variant={"outline"}
+                      width={"110px"}
+                      fontWeight={400}
+                      border={"1px"}
+                      borderColor={isPurple ? "#fff" : "brand.primary"}
+                      color={isPurple ? "#fff" : "brand.primary"}
+                      _hover={{
+                        bg: isPurple ? "" : "brand.primaryTint",
+                      }}
+                    >
+                      Login
+                    </Button>
+                    <Button
+                      as={Link}
+                      href="/register"
+                      width={"110px"}
+                      fontWeight={400}
+                      color={isPurple ? "brand.primary" : "white"}
+                      bg={isPurple ? "#fff" : "brand.primary"}
+                      _hover={{
+                        bg: isPurple ? "#e8e8e8" : "brand.primary",
+                      }}
+                    >
+                      Sign up
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    as={Link}
+                    // @ts-ignore
+                    href={`/${session?.user?.role}`}
+                    width={"110px"}
+                    fontWeight={400}
+                    color={isPurple ? "brand.primary" : "white"}
+                    bg={isPurple ? "#fff" : "brand.primary"}
+                    _hover={{
+                      bg: isPurple ? "#e8e8e8" : "brand.primary",
+                    }}
+                  >
+                    Dashboard
+                  </Button>
+                )}
+              </>
             )}
           </Flex>
           {/* end desktop nav items */}

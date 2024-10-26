@@ -44,7 +44,9 @@ export const authOptions = {
         token.name = user.fullName;
         token.email = user.email;
         token.id = user.id;
+        token.role = user.isAdmin ? "admin" : "user";
       }
+      console.log("this is the user: ", user);
       console.log("this is the token: ", token);
       return token;
     },
@@ -53,6 +55,7 @@ export const authOptions = {
         session.user.username = token.username;
         session.user.email = token.email;
         session.user.id = token.id;
+        session.user.role = token.role;
       }
       console.log("this is the session: ", session);
       return session;

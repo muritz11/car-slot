@@ -1,7 +1,6 @@
-"use client";
 import ComingSoon from "@/app/components/ComingSoon";
 
-const Admin = () => {
+const Review = () => {
   return (
     <div>
       <ComingSoon />
@@ -9,4 +8,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default Review;

@@ -64,8 +64,12 @@ export default function MyFooter() {
         align={"center"}
       >
         <Box>
-          {/* @ts-ignore */}
-          <Image src={Logo} alt="logo" />
+          <Image
+            src={"/logo.jpg"}
+            width={"60px"}
+            objectFit={"contain"}
+            alt="logo"
+          />
         </Box>
         <Stack direction={"row"} spacing={6}>
           <Link href={"/#"}>Terms of Use</Link>
