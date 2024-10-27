@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import Slot from "../../../../models/SlotModel";
 import { connectDB } from "../../../../utils/connect";
 
-
 export async function GET(req) {
   try {
+    await connectDB();
     const items = await Slot.find().sort({ createdAt: -1 });
 
     return NextResponse.json({

@@ -4,6 +4,7 @@ import { connectDB } from "../../../../utils/connect";
 
 export async function GET(req) {
   try {
+    await connectDB();
     const areas = await Area.find().sort({ createdAt: -1 });
 
     return NextResponse.json({

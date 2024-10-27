@@ -4,6 +4,7 @@ import { connectDB } from "../../../../utils/connect";
 
 export async function GET(req) {
   try {
+    await connectDB();
     const items = await Booking.find().populate("slot").sort({ createdAt: -1 });
 
     return NextResponse.json({
