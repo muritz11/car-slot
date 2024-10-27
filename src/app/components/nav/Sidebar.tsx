@@ -26,6 +26,7 @@ import { usePathname } from "next/navigation";
 import { MdPlaylistAdd } from "react-icons/md";
 import { BsBookmarkPlus } from "react-icons/bs";
 import { ImExit } from "react-icons/im";
+import { PiMapPinAreaDuotone } from "react-icons/pi";
 // import { RootState } from '../../redux/store';
 
 interface LinkItemProps {
@@ -91,6 +92,11 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           name: "Dashboard",
           icon: RiLayoutMasonryFill,
           routeTo: "/admin",
+        },
+        {
+          name: "Manage area",
+          icon: PiMapPinAreaDuotone,
+          routeTo: "/admin/manage-area",
         },
         {
           name: "Add slot",
