@@ -1,7 +1,8 @@
 import mongoose, { Schema, Document, Model, Types } from "mongoose";
 
 interface IBooking extends Document {
-  slot: Types.ObjectId;
+  slot_id: Types.ObjectId;
+  user_id: Types.ObjectId;
   sectionIndex: number;
   sectionSlotNumber: number;
   createdAt?: Date;
@@ -10,9 +11,15 @@ interface IBooking extends Document {
 
 const BookingSchema: Schema = new Schema(
   {
-    slot: {
+    slot_id: {
       type: Schema.Types.ObjectId,
-      required: [true, "Please provide slot id"],
+      ref: "Slot",
+      required: true,
+    },
+    user_id: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     sectionIndex: {
       type: Number,

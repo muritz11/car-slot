@@ -5,7 +5,7 @@ import { connectDB } from "../../../../utils/connect";
 
 export async function GET(req) {
   try {
-    const items = await Slot.find().populate("area").sort({ createdAt: -1 });
+    const items = await Slot.find().sort({ createdAt: -1 });
 
     return NextResponse.json({
       success: true,

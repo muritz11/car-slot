@@ -5,19 +5,9 @@ import {
   Button,
   Flex,
   Heading,
-  Icon,
-  Input,
-  InputGroup,
   Text,
-  Image,
-  InputLeftElement,
-  InputRightElement,
 } from "@chakra-ui/react";
-import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-import { BsFillCheckCircleFill } from "react-icons/bs";
-import { HiOutlineCamera, HiPencil } from "react-icons/hi";
 import CustomInput from "../../../../../utils/CustomInput";
-import { LuSettings2 } from "react-icons/lu";
 import { useEffect, useRef, useState } from "react";
 import { showError, showSuccess } from "../../../../../utils/Alerts";
 import { truncateText } from "../../../../../utils/helpers";
@@ -26,6 +16,7 @@ import Loader from "../../../../../utils/Loader";
 import { IArea } from "../../admin/manage-area/page";
 import { TiTimes } from "react-icons/ti";
 import { FaCheck } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 
 export interface ISlot {
   _id: string;
@@ -46,12 +37,13 @@ const ReserveSlot = () => {
   const [areaBookId, setAreaBookId] = useState<undefined | string>(undefined);
   const [fetchedSlots, setFetchedSlots] = useState<ISlot[]>([]);
   const [sections, setSections] = useState<ISection[]>([]);
+  const { data: session } = useSession();
   const [formState, setFormState] = useState<{
-    slot: string;
+    slot_id: string;
     sectionIndex: string | number;
     sectionSlotNumber: string | number;
   }>({
-    slot: "",
+    slot_id: "",
     sectionIndex: "",
     sectionSlotNumber: "",
   });
@@ -61,11 +53,11 @@ const ReserveSlot = () => {
   });
 
   const setBookingInfo = (
-    slot: string,
+    slot_id: string,
     sectionIndex: number,
     sectionSlotNumber: number
   ) => {
-    setFormState({ slot, sectionIndex, sectionSlotNumber });
+    setFormState({ slot_id, sectionIndex, sectionSlotNumber });
   };
 
   const fetchSlots = async () => {
@@ -104,8 +96,8 @@ const ReserveSlot = () => {
     const selectedSlot = fetchedSlots?.find((value) => value?._id === menuId);
     setSelectedSlotInfo({
       ...selectedSlotInfo,
-      title: selectedSlot?.area.title || "N/A",
-      location: selectedSlot?.area.location || "N/A",
+      title: selectedSlot?.area.title || "Area title",
+      location: selectedSlot?.area.location || "Area location",
     });
     setSections(selectedSlot?.sections || []);
     setPreview(selectedSlot?.area?.coverUrl);
@@ -123,17 +115,17 @@ const ReserveSlot = () => {
     resetSelectedSlotInfo();
     setFormState({
       ...formState,
-      slot: "",
+      slot_id: "",
       sectionIndex: "",
       sectionSlotNumber: "",
     });
   };
 
   const handleSubmit = async () => {
-    const { slot, sectionIndex, sectionSlotNumber } = formState;
+    const { slot_id, sectionIndex, sectionSlotNumber } = formState;
 
     console.log(formState);
-    if (!slot || typeof sectionIndex === "string") {
+    if (!slot_id || typeof sectionIndex === "string") {
       showError("An error occurred");
       return;
     }
@@ -150,7 +142,11 @@ const ReserveSlot = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...formState }),
+        body: JSON.stringify({
+          ...formState,
+          // @ts-ignore
+          user_id: session?.user ? session?.user.id : "",
+        }),
       });
 
       if (res.ok) {
@@ -382,7 +378,7 @@ const MenuCard = ({ name, imgSrc, location, onClick }: MenuCardProps) => {
     >
       <Box textAlign={"center"} mt={"-60px"}>
         <Avatar
-          name={name}
+          name={name || "Area title"}
           boxSize={"100px"}
           src={imgSrc}
           shadow={"rgba(0, 0, 0, 0.1) 0px 10px 50px"}
@@ -390,11 +386,11 @@ const MenuCard = ({ name, imgSrc, location, onClick }: MenuCardProps) => {
       </Box>
       <Box mt={4}>
         <Text fontSize={"14px"} fontWeight={600} mb={1}>
-          {name}
+          {name || "Area title"}
         </Text>
         <Flex gap={1} fontSize={"14px"} align={"center"}>
           <PiMapPinAreaDuotone />
-          <Text mb={1}>{truncateText(location, 10)}</Text>
+          <Text mb={1}>{truncateText(location || "Area location", 10)}</Text>
         </Flex>
       </Box>
     </Box>
