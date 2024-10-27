@@ -28,6 +28,7 @@ const AreaSchema: Schema = new Schema(
   }
 );
 // export const Area = mongoose.models && "Area" in mongoose.models ? mongoose.models.Post : mongoose.model("Area", AreaSchema);
-const Area: Model<IArea> = mongoose.model<IArea>("Area", AreaSchema);
+const Area: Model<IArea> =
+  mongoose.models.Area || mongoose.model<IArea>("Area", AreaSchema);
 
 export default Area;
