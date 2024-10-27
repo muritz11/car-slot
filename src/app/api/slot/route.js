@@ -2,6 +2,25 @@ import { NextResponse } from "next/server";
 import Slot from "../../../../models/SlotModel";
 import { connectDB } from "../../../../utils/connect";
 
+
+export async function GET(req) {
+  try {
+    const items = await Slot.find().populate("area").sort({ createdAt: -1 });
+
+    return NextResponse.json({
+      success: true,
+      data: items,
+    });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({
+      success: false,
+      status: 500,
+      message: error?.message || "An error occurred while fetching slots",
+    });
+  }
+}
+
 export async function POST(req) {
   try {
     await connectDB();
