@@ -8,7 +8,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CustomInput from "../../../../../utils/CustomInput";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { showError, showSuccess } from "../../../../../utils/Alerts";
 import { truncateText } from "../../../../../utils/helpers";
 import { PiMapPinAreaDuotone } from "react-icons/pi";
@@ -17,6 +17,7 @@ import { IArea } from "../../admin/manage-area/page";
 import { TiTimes } from "react-icons/ti";
 import { FaCheck } from "react-icons/fa";
 import { useSession } from "next-auth/react";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 export interface ISlot {
   _id: string;
@@ -36,14 +37,15 @@ const ReserveSlot = () => {
   const [isFetchLoading, setIsFetchLoading] = useState(false);
   const [areaBookId, setAreaBookId] = useState<undefined | string>(undefined);
   const [fetchedSlots, setFetchedSlots] = useState<ISlot[]>([]);
+  const [fetchedBookings, setFetchedBookings] = useState<any[]>([]);
   const [sections, setSections] = useState<ISection[]>([]);
   const { data: session } = useSession();
   const [formState, setFormState] = useState<{
-    slot_id: string;
+    slot: string;
     sectionIndex: string | number;
     sectionSlotNumber: string | number;
   }>({
-    slot_id: "",
+    slot: "",
     sectionIndex: "",
     sectionSlotNumber: "",
   });
@@ -53,11 +55,11 @@ const ReserveSlot = () => {
   });
 
   const setBookingInfo = (
-    slot_id: string,
+    slot: string,
     sectionIndex: number,
     sectionSlotNumber: number
   ) => {
-    setFormState({ slot_id, sectionIndex, sectionSlotNumber });
+    setFormState({ slot, sectionIndex, sectionSlotNumber });
   };
 
   const fetchSlots = async () => {
@@ -79,8 +81,27 @@ const ReserveSlot = () => {
     setIsFetchLoading(false);
   };
 
+  const fetchBookings = async () => {
+    const fetchItems = await fetch("/api/booking", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const res = await fetchItems.json();
+    console.log(res);
+    if (res?.success) {
+      setFetchedBookings(res?.data);
+      console.log("first", res?.data);
+    } else {
+      console.log("An error occurred, could not fetch bookings", res);
+    }
+  };
+
   useEffect(() => {
     fetchSlots();
+    fetchBookings();
   }, []);
 
   const handleInputs = (e: any) => {
@@ -115,17 +136,17 @@ const ReserveSlot = () => {
     resetSelectedSlotInfo();
     setFormState({
       ...formState,
-      slot_id: "",
+      slot: "",
       sectionIndex: "",
       sectionSlotNumber: "",
     });
   };
 
   const handleSubmit = async () => {
-    const { slot_id, sectionIndex, sectionSlotNumber } = formState;
+    const { slot, sectionIndex, sectionSlotNumber } = formState;
 
     console.log(formState);
-    if (!slot_id || typeof sectionIndex === "string") {
+    if (!slot || typeof sectionIndex === "string") {
       showError("An error occurred");
       return;
     }
@@ -175,6 +196,7 @@ const ReserveSlot = () => {
           borderRadius={"16px"}
           p={"23px"}
           height={"650px"}
+          display={{ base: areaBookId ? "none" : "block", md: "block" }}
         >
           <Flex justifyContent={"space-between"} alignItems={"center"} mb={7}>
             <Heading
@@ -241,6 +263,7 @@ const ReserveSlot = () => {
         <Box
           width={{ base: "full", md: "35%" }}
           transition={"height 0.3s ease-out"}
+          display={{ base: areaBookId ? "block" : "none", md: "block" }}
           // height={"400px"}
           bg={"#fff"}
           borderRadius={"16px"}
@@ -255,18 +278,34 @@ const ReserveSlot = () => {
             </Box>
             <Box textAlign={"right"}>
               {areaBookId ? (
-                <Button
-                  leftIcon={<TiTimes />}
-                  fontSize={"14px"}
-                  size={"sm"}
-                  fontWeight={400}
-                  bg={"brand.primary"}
-                  color={"#fff"}
-                  onClick={resetMenuForm}
-                  _hover={{ bg: "brand.primary" }}
-                >
-                  clear
-                </Button>
+                <>
+                  <Button
+                    leftIcon={<TiTimes />}
+                    fontSize={"14px"}
+                    size={"sm"}
+                    fontWeight={400}
+                    bg={"brand.primary"}
+                    color={"#fff"}
+                    onClick={resetMenuForm}
+                    display={{ base: "none", md: "inline-flex" }}
+                    _hover={{ bg: "brand.primary" }}
+                  >
+                    clear
+                  </Button>
+                  <Button
+                    leftIcon={<IoMdArrowRoundBack />}
+                    fontSize={"14px"}
+                    size={"sm"}
+                    fontWeight={400}
+                    bg={"brand.primary"}
+                    color={"#fff"}
+                    onClick={resetMenuForm}
+                    display={{ base: "inline-flex", md: "none" }}
+                    _hover={{ bg: "brand.primary" }}
+                  >
+                    Back
+                  </Button>
+                </>
               ) : (
                 ""
               )}

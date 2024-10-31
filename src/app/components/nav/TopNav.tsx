@@ -11,13 +11,9 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Text,
 } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
-import { FaBell } from "react-icons/fa6";
 import { FiChevronDown, FiMenu } from "react-icons/fi";
 import { Link } from "@chakra-ui/next-js";
 import { usePathname } from "next/navigation";
@@ -58,7 +54,10 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         >
           {pathname === "/admin" || pathname === "/user"
             ? "Dashboard"
-            : pathname?.replace(/-|\//g, " ")?.replace("admin", "")}
+            : pathname
+                ?.replace(/-|\//g, " ")
+                ?.replace("admin", "")
+                ?.replace("user", "")}
         </Heading>
       </Flex>
 

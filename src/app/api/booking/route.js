@@ -25,10 +25,9 @@ export async function POST(req) {
   try {
     await connectDB();
 
-    const { slot_id, user_id, sectionIndex, sectionSlotNumber } =
-      await req.json();
+    const { slot, user_id, sectionIndex, sectionSlotNumber } = await req.json();
     const exists = await Booking.findOne({
-      slot_id: slot_id,
+      slot: slot,
       sectionIndex: sectionIndex,
       sectionSlotNumber: sectionSlotNumber,
     });
@@ -41,7 +40,7 @@ export async function POST(req) {
       );
     }
     await Booking.create({
-      slot_id,
+      slot,
       user_id,
       sectionIndex,
       sectionSlotNumber,
