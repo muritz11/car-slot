@@ -146,52 +146,59 @@ const ManageSlot = () => {
       return;
     }
 
-    try {
-      setisLoading(true);
+    if (!menuEditId) {
+      try {
+        setisLoading(true);
 
-      // TODO: try uploading the img the return coverUrl
-      let coverUrl: string | undefined = undefined;
-      if (file) {
-        const fileForm = new FormData();
-        fileForm.append("file", file);
-
-        const res = await fetch("/api/upload-file", {
+        // TODO: try uploading the img the return coverUrl
+        const res = await fetch("/api/area", {
           method: "POST",
-          body: fileForm,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...formState }),
         });
 
-        const response = await res.json();
-
-        if (res.ok && response.status === 200) {
-          coverUrl = response.data.secure_url;
+        if (res.ok) {
+          resetFormState();
+          showSuccess("Area created successfully");
+          fetchAreas();
         } else {
-          showError("Could not upload image");
-          console.log(response);
-          return;
+          const err = await res.json();
+          showError(`${err.message}`);
         }
+        setisLoading(false);
+      } catch (error) {
+        setisLoading(false);
+        console.log(error);
+        showError("Something went wrong");
       }
+    } else {
+      try {
+        setisLoading(true);
 
-      const res = await fetch("/api/area", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...formState, coverUrl }),
-      });
+        const res = await fetch("/api/area", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...formState, areaId: menuEditId }),
+        });
 
-      if (res.ok) {
-        resetFormState();
-        showSuccess("Area created successfully");
-        fetchAreas();
-      } else {
-        const err = await res.json();
-        showError(`${err.message}`);
+        if (res.ok) {
+          resetFormState();
+          showSuccess("Area updated successfully");
+          fetchAreas();
+        } else {
+          const err = await res.json();
+          showError(`${err.message}`);
+        }
+        setisLoading(false);
+      } catch (error) {
+        setisLoading(false);
+        console.log(error);
+        showError("Something went wrong");
       }
-      setisLoading(false);
-    } catch (error) {
-      setisLoading(false);
-      console.log(error);
-      showError("Something went wrong");
     }
   };
 
@@ -379,7 +386,6 @@ const ManageSlot = () => {
             }}
             onClick={handleSubmit}
             isLoading={isLoading}
-            disabled={menuEditId ? true : false}
           >
             {menuEditId ? "Update details" : "Add Area"}
           </Button>
