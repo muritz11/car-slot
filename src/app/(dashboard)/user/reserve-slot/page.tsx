@@ -32,12 +32,18 @@ interface ISection {
   numberOfSlots: number;
 }
 
+interface IBooking {
+  slot: ISlot;
+  user_id: string;
+  sectionIndex: number;
+  sectionSlotNumber: number;
+}
+
 const ReserveSlot = () => {
   const [isLoading, setisLoading] = useState(false);
   const [isFetchLoading, setIsFetchLoading] = useState(false);
-  const [areaBookId, setAreaBookId] = useState<undefined | string>(undefined);
   const [fetchedSlots, setFetchedSlots] = useState<ISlot[]>([]);
-  const [fetchedBookings, setFetchedBookings] = useState<any[]>([]);
+  const [fetchedBookings, setFetchedBookings] = useState<IBooking[]>([]);
   const [sections, setSections] = useState<ISection[]>([]);
   const { data: session } = useSession();
   const [formState, setFormState] = useState<{
@@ -50,6 +56,7 @@ const ReserveSlot = () => {
     sectionSlotNumber: "",
   });
   const [selectedSlotInfo, setSelectedSlotInfo] = useState({
+    id: "",
     title: "",
     location: "",
   });
@@ -72,7 +79,6 @@ const ReserveSlot = () => {
     });
 
     const res = await fetchItems.json();
-    console.log(res);
     if (res?.success) {
       setFetchedSlots(res?.data);
     } else {
@@ -90,10 +96,8 @@ const ReserveSlot = () => {
     });
 
     const res = await fetchItems.json();
-    console.log(res);
     if (res?.success) {
       setFetchedBookings(res?.data);
-      console.log("first", res?.data);
     } else {
       console.log("An error occurred, could not fetch bookings", res);
     }
@@ -112,11 +116,11 @@ const ReserveSlot = () => {
 
   const [preview, setPreview] = useState<string | undefined>(undefined);
 
-  const selectMenu = (menuId: string) => {
-    setAreaBookId(menuId);
-    const selectedSlot = fetchedSlots?.find((value) => value?._id === menuId);
+  const selectSlot = (itemId: string) => {
+    const selectedSlot = fetchedSlots?.find((value) => value?._id === itemId);
     setSelectedSlotInfo({
       ...selectedSlotInfo,
+      id: itemId,
       title: selectedSlot?.area.title || "Area title",
       location: selectedSlot?.area.location || "Area location",
     });
@@ -126,16 +130,15 @@ const ReserveSlot = () => {
 
   const resetSelectedSlotInfo = () => {
     setSelectedSlotInfo({
+      id: "",
       title: "",
       location: "",
     });
   };
 
   const resetMenuForm = () => {
-    setAreaBookId(undefined);
     resetSelectedSlotInfo();
     setFormState({
-      ...formState,
       slot: "",
       sectionIndex: "",
       sectionSlotNumber: "",
@@ -196,7 +199,10 @@ const ReserveSlot = () => {
           borderRadius={"16px"}
           p={"23px"}
           height={"650px"}
-          display={{ base: areaBookId ? "none" : "block", md: "block" }}
+          display={{
+            base: selectedSlotInfo.id ? "none" : "block",
+            md: "block",
+          }}
         >
           <Flex justifyContent={"space-between"} alignItems={"center"} mb={7}>
             <Heading
@@ -247,13 +253,13 @@ const ReserveSlot = () => {
             <Flex justify={"flex-start"} flexWrap={"wrap"} gap={"10px"}>
               {/* todo: simulate empty menu */}
               <Loader isLoading={isFetchLoading} height={"300px"} />
-              {fetchedSlots?.map((menu) => (
+              {fetchedSlots?.map((item) => (
                 <MenuCard
-                  key={menu?._id}
-                  name={menu?.area.title}
-                  onClick={() => selectMenu(menu?._id)}
-                  location={menu.area.location}
-                  imgSrc={menu.area.coverUrl || ""}
+                  key={item?._id}
+                  name={item?.area.title}
+                  onClick={() => selectSlot(item?._id)}
+                  location={item.area.location}
+                  imgSrc={item.area.coverUrl || ""}
                 />
               ))}
             </Flex>
@@ -263,7 +269,10 @@ const ReserveSlot = () => {
         <Box
           width={{ base: "full", md: "35%" }}
           transition={"height 0.3s ease-out"}
-          display={{ base: areaBookId ? "block" : "none", md: "block" }}
+          display={{
+            base: selectedSlotInfo.id ? "block" : "none",
+            md: "block",
+          }}
           // height={"400px"}
           bg={"#fff"}
           borderRadius={"16px"}
@@ -277,7 +286,7 @@ const ReserveSlot = () => {
               </Text>
             </Box>
             <Box textAlign={"right"}>
-              {areaBookId ? (
+              {selectedSlotInfo.id ? (
                 <>
                   <Button
                     leftIcon={<TiTimes />}
@@ -311,9 +320,9 @@ const ReserveSlot = () => {
               )}
             </Box>
           </Flex>
-          {areaBookId ? (
+          {selectedSlotInfo.id ? (
             <>
-              <Box mb={"40px"} display={"block"}>
+              <Box mb={"30px"} display={"block"}>
                 {/* Menu detail form */}
                 <Flex
                   borderRadius="50%"
@@ -362,11 +371,40 @@ const ReserveSlot = () => {
                       sectionIndex={idx}
                       key={`sec-${idx}`}
                       setBookingInfo={setBookingInfo}
-                      slotId={areaBookId}
+                      slotId={selectedSlotInfo.id}
                       selectedSectionSlotNumber={formState.sectionSlotNumber}
                       selectedSectionIndex={formState.sectionIndex}
+                      bookings={fetchedBookings}
                     />
                   ))}
+                </Box>
+                {/* slot note */}
+                <Box>
+                  <Text fontWeight={500}>Note:</Text>
+                  <Flex align={"center"} gap={2}>
+                    <Flex
+                      boxSize={"15px"}
+                      bg={"green.600"}
+                      color={"#fff"}
+                      justify={"center"}
+                      align={"center"}
+                      fontWeight={600}
+                      rounded={"3px"}
+                    ></Flex>
+                    <Text fontSize={"14px"}>Available slots</Text>
+                  </Flex>
+                  <Flex align={"center"} gap={2}>
+                    <Flex
+                      boxSize={"15px"}
+                      bg={"red.600"}
+                      color={"#fff"}
+                      justify={"center"}
+                      align={"center"}
+                      fontWeight={600}
+                      rounded={"3px"}
+                    ></Flex>
+                    <Text fontSize={"14px"}>Unavailable slots</Text>
+                  </Flex>
                 </Box>
               </Box>
               <Button
@@ -443,6 +481,7 @@ const SectionUI = ({
   setBookingInfo,
   selectedSectionSlotNumber,
   selectedSectionIndex,
+  bookings,
 }: {
   item: ISection;
   slotId: string;
@@ -454,8 +493,10 @@ const SectionUI = ({
     sectionIndex: number,
     sectionSlotNumber: number
   ) => void;
+  bookings: IBooking[];
 }) => {
   const [slots, setSlots] = useState<number[]>([]);
+  const [unavailableSlots, setUnavailableSlots] = useState<number[]>([]);
 
   useEffect(() => {
     const arr = [];
@@ -464,6 +505,31 @@ const SectionUI = ({
     }
     setSlots(arr);
   }, []);
+
+  useEffect(() => {
+    const arr: number[] = [];
+    const bks = bookings.filter(
+      (val) => val.slot._id === slotId && val.sectionIndex === sectionIndex
+    );
+    bks.forEach((val) => arr.push(val.sectionSlotNumber));
+
+    setUnavailableSlots(arr);
+  }, []);
+
+  const returnBg = (val: number) => {
+    if (unavailableSlots.includes(val)) {
+      return "red.600";
+    }
+
+    if (
+      selectedSectionIndex === sectionIndex &&
+      selectedSectionSlotNumber === val
+    ) {
+      return "green.900";
+    }
+
+    return "green.600";
+  };
 
   return (
     <Box mb={5}>
@@ -475,19 +541,18 @@ const SectionUI = ({
           <Flex
             key={`sl-${val}`}
             boxSize={"35px"}
-            bg={
-              selectedSectionIndex === sectionIndex &&
-              selectedSectionSlotNumber === val
-                ? "green.900"
-                : "green.600"
-            }
+            bg={returnBg(val)}
             color={"#fff"}
             justify={"center"}
             align={"center"}
             fontWeight={600}
             rounded={"3px"}
             cursor={"pointer"}
-            onClick={() => setBookingInfo(slotId, sectionIndex, val)}
+            onClick={() =>
+              !unavailableSlots.includes(val)
+                ? setBookingInfo(slotId, sectionIndex, val)
+                : null
+            }
           >
             {selectedSectionIndex === sectionIndex &&
             selectedSectionSlotNumber === val ? (

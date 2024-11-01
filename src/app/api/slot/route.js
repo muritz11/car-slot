@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 import Slot from "../../../../models/SlotModel";
+import Area from "../../../../models/AreaModel";
 import { connectDB } from "../../../../utils/connect";
 
 export async function GET(req) {
   try {
     await connectDB();
-    const items = await Slot.find().sort({ createdAt: -1 });
+    const items = await Slot.find()
+      .populate({
+        path: "area",
+        model: Area,
+      })
+      .sort({ createdAt: -1 });
 
     return NextResponse.json({
       success: true,
