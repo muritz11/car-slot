@@ -148,13 +148,35 @@ const ManageSlot = () => {
 
     try {
       setisLoading(true);
+
       // TODO: try uploading the img the return coverUrl
+      let coverUrl: string | undefined = undefined;
+      if (file) {
+        const fileForm = new FormData();
+        fileForm.append("file", file);
+
+        const res = await fetch("/api/upload-file", {
+          method: "POST",
+          body: fileForm,
+        });
+
+        const response = await res.json();
+
+        if (res.ok && response.status === 200) {
+          coverUrl = response.data.secure_url;
+        } else {
+          showError("Could not upload image");
+          console.log(response);
+          return;
+        }
+      }
+
       const res = await fetch("/api/area", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...formState }),
+        body: JSON.stringify({ ...formState, coverUrl }),
       });
 
       if (res.ok) {
