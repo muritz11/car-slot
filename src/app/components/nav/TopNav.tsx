@@ -55,6 +55,9 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
           {pathname === "/admin" || pathname === "/user"
             ? "Dashboard"
             : pathname
+                ?.split("/")
+                .filter((segment) => !/^[a-f\d]{24}$/i.test(segment)) // Exclude ObjectId-like segments
+                .join(" ")
                 ?.replace(/-|\//g, " ")
                 ?.replace("admin", "")
                 ?.replace("user", "")}

@@ -46,8 +46,6 @@ export const authOptions = {
         token.id = user.id;
         token.role = user.isAdmin ? "admin" : "user";
       }
-      console.log("this is the user: ", user);
-      console.log("this is the token: ", token);
       return token;
     },
     async session({ session, token }) {
@@ -57,7 +55,6 @@ export const authOptions = {
         session.user.id = token.id;
         session.user.role = token.role;
       }
-      console.log("this is the session: ", session);
       return session;
     },
   },

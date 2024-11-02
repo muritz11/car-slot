@@ -5,6 +5,14 @@ interface IBooking extends Document {
   user_id: Types.ObjectId;
   sectionIndex: number;
   sectionSlotNumber: number;
+  price?: number;
+  bookingStatus:
+    | "booked"
+    | "exit-requested"
+    | "cancelled"
+    | "unavailable"
+    | "completed";
+  bookingDate?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -28,6 +36,23 @@ const BookingSchema: Schema = new Schema(
     sectionSlotNumber: {
       type: Number,
       required: true,
+    },
+    price: {
+      type: Number,
+    },
+    bookingStatus: {
+      type: String,
+      enum: [
+        "booked",
+        "exit-requested",
+        "cancelled",
+        "unavailable",
+        "completed",
+      ],
+      required: true,
+    },
+    bookingDate: {
+      type: Date,
     },
   },
   {

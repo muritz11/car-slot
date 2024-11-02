@@ -1,5 +1,20 @@
 "use client";
-import { Avatar, Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
 import CustomInput from "../../../../../utils/CustomInput";
 import { useEffect, useState } from "react";
 import { showError, showSuccess } from "../../../../../utils/Alerts";
@@ -11,11 +26,14 @@ import { TiTimes } from "react-icons/ti";
 import { FaCheck } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { CiCircleCheck } from "react-icons/ci";
+import CustomDateTimePicker from "../../../../../utils/CustomDateTimePicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export interface ISlot {
   _id: string;
   area: IArea;
-  sections: { title: string; numberOfSlots: number; _id: string }[];
+  sections: ISection[];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -23,6 +41,7 @@ export interface ISlot {
 interface ISection {
   title: string;
   numberOfSlots: number;
+  price: number;
 }
 
 interface IBooking {
@@ -34,19 +53,33 @@ interface IBooking {
 
 const ReserveSlot = () => {
   const [isLoading, setisLoading] = useState(false);
-  const [isFetchLoading, setIsFetchLoading] = useState(false);
+  const [isFetchLoading, setIsFetchLoading] = useState(true);
   const [fetchedSlots, setFetchedSlots] = useState<ISlot[]>([]);
   const [fetchedBookings, setFetchedBookings] = useState<IBooking[]>([]);
   const [sections, setSections] = useState<ISection[]>([]);
   const { data: session } = useSession();
+  const {
+    isOpen: isPriceModalOpen,
+    onOpen: onPriceModalOpen,
+    onClose: onPriceModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: isSuccessModalOpen,
+    onOpen: onSuccessModalOpen,
+    onClose: onSuccessModalClose,
+  } = useDisclosure();
   const [formState, setFormState] = useState<{
     slot: string;
     sectionIndex: string | number;
     sectionSlotNumber: string | number;
+    price: string | number;
+    bookingDate: any;
   }>({
     slot: "",
     sectionIndex: "",
     sectionSlotNumber: "",
+    price: "",
+    bookingDate: null,
   });
   const [selectedSlotInfo, setSelectedSlotInfo] = useState({
     id: "",
@@ -57,9 +90,16 @@ const ReserveSlot = () => {
   const setBookingInfo = (
     slot: string,
     sectionIndex: number,
-    sectionSlotNumber: number
+    sectionSlotNumber: number,
+    price: number
   ) => {
-    setFormState({ slot, sectionIndex, sectionSlotNumber });
+    setFormState({
+      ...formState,
+      slot,
+      sectionIndex,
+      sectionSlotNumber,
+      price,
+    });
   };
 
   const fetchSlots = async () => {
@@ -135,11 +175,13 @@ const ReserveSlot = () => {
       slot: "",
       sectionIndex: "",
       sectionSlotNumber: "",
+      price: "",
+      bookingDate: null,
     });
   };
 
   const handleSubmit = async () => {
-    const { slot, sectionIndex, sectionSlotNumber } = formState;
+    const { slot, sectionIndex, sectionSlotNumber, bookingDate } = formState;
 
     console.log(formState);
     if (!slot || typeof sectionIndex === "string") {
@@ -149,6 +191,11 @@ const ReserveSlot = () => {
 
     if (!sectionSlotNumber) {
       showError("Select slot");
+      return;
+    }
+
+    if (!bookingDate) {
+      showError("Select booking date");
       return;
     }
 
@@ -168,7 +215,8 @@ const ReserveSlot = () => {
 
       if (res.ok) {
         resetMenuForm();
-        showSuccess("Slot booked successfully");
+        onPriceModalClose();
+        onSuccessModalOpen();
         fetchSlots();
       } else {
         const err = await res.json();
@@ -206,55 +254,22 @@ const ReserveSlot = () => {
             >
               Slots
             </Heading>
-            {/* <Flex
-              gap={{ base: 1, md: 2 }}
-              width={"80%"}
-              justifyContent={"flex-end"}
-            >
-              <InputGroup width={{ base: "100px", md: "150px", lg: "300px" }}>
-                <InputLeftElement
-                  pointerEvents="none"
-                  children={<FiSearch color="#4D4D4D" />}
-                />
-                <Input
-                  placeholder="Search by customer name or order ID"
-                  type={"search"}
-                  fontSize={"12px"}
-                  variant={"filled"}
-                  bg={"#F2F1F1"}
-                  //   value={searchQuery}
-                  //   onChange={(e) => setSearchQuery(e.target.value)}
-                  borderRadius={"8px"}
-                />
-              </InputGroup>
-
-              <Button
-                rightIcon={<LuSettings2 />}
-                variant={"outline"}
-                borderRadius={"8px"}
-                borderColor={"brand.primary"}
-                color={"brand.primary"}
-                fontWeight={500}
-                px={5}
-              >
-                Filter
-              </Button>
-            </Flex> */}
           </Flex>
 
           <Box height={"550px"} overflowY={"auto"} className={"custom-scroll"}>
             <Flex justify={"flex-start"} flexWrap={"wrap"} gap={"10px"}>
               {/* todo: simulate empty menu */}
               <Loader isLoading={isFetchLoading} height={"300px"} />
-              {fetchedSlots?.map((item) => (
-                <MenuCard
-                  key={item?._id}
-                  name={item?.area?.title}
-                  onClick={() => selectSlot(item?._id)}
-                  location={item?.area?.location}
-                  imgSrc={item?.area?.coverUrl || ""}
-                />
-              ))}
+              {!isFetchLoading &&
+                fetchedSlots?.map((item) => (
+                  <MenuCard
+                    key={item?._id}
+                    name={item?.area?.title}
+                    onClick={() => selectSlot(item?._id)}
+                    location={item?.area?.location}
+                    imgSrc={item?.area?.coverUrl || ""}
+                  />
+                ))}
             </Flex>
           </Box>
         </Box>
@@ -364,6 +379,7 @@ const ReserveSlot = () => {
                       sectionIndex={idx}
                       key={`sec-${idx}`}
                       setBookingInfo={setBookingInfo}
+                      price={val.price}
                       slotId={selectedSlotInfo.id}
                       selectedSectionSlotNumber={formState.sectionSlotNumber}
                       selectedSectionIndex={formState.sectionIndex}
@@ -410,8 +426,7 @@ const ReserveSlot = () => {
                 _hover={{
                   bg: "brand.primary",
                 }}
-                onClick={handleSubmit}
-                isLoading={isLoading}
+                onClick={onPriceModalOpen}
                 disabled={formState.sectionSlotNumber ? false : true}
               >
                 Book slot
@@ -424,6 +439,62 @@ const ReserveSlot = () => {
           )}
         </Box>
       </Flex>
+
+      <Modal isOpen={isPriceModalOpen} onClose={onPriceModalClose}>
+        <ModalOverlay />
+        <ModalContent borderRadius={"12px"}>
+          <ModalHeader>Book slot</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Box>
+              <CustomDateTimePicker
+                label="Select Booking date"
+                value={formState.bookingDate}
+                portalId="datepicker-portal"
+                onChange={(date) =>
+                  setFormState({ ...formState, bookingDate: date })
+                }
+              />
+            </Box>
+            <Text mt={2}>
+              Slot price: <b>${formState.price}</b>
+            </Text>
+            <div id="datepicker-portal"></div>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant={"light"} mr={3} onClick={onPriceModalClose}>
+              Close
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleSubmit}
+              isLoading={isLoading}
+            >
+              Proceed to payment
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isSuccessModalOpen} onClose={onSuccessModalClose}>
+        <ModalOverlay />
+        <ModalContent borderRadius={"12px"}>
+          {/* <ModalHeader>Book slot</ModalHeader> */}
+          <ModalCloseButton />
+          <ModalBody>
+            <Flex justify={"center"} mt={5}>
+              <CiCircleCheck fontSize={"95px"} color={"#00C563"} />
+            </Flex>
+            <Text textAlign={"center"} fontWeight={500}>
+              Payment successful
+            </Text>
+            <Text textAlign={"center"} mb={5}>
+              Your slot has been booked
+            </Text>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 };
@@ -475,16 +546,19 @@ const SectionUI = ({
   selectedSectionSlotNumber,
   selectedSectionIndex,
   bookings,
+  price,
 }: {
   item: ISection;
   slotId: string;
   sectionIndex: number;
   selectedSectionSlotNumber: string | number;
   selectedSectionIndex: string | number;
+  price: number;
   setBookingInfo: (
     slot: string,
     sectionIndex: number,
-    sectionSlotNumber: number
+    sectionSlotNumber: number,
+    price: number
   ) => void;
   bookings: IBooking[];
 }) => {
@@ -543,7 +617,7 @@ const SectionUI = ({
             cursor={"pointer"}
             onClick={() =>
               !unavailableSlots.includes(val)
-                ? setBookingInfo(slotId, sectionIndex, val)
+                ? setBookingInfo(slotId, sectionIndex, val, price)
                 : null
             }
           >

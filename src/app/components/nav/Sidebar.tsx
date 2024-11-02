@@ -25,7 +25,7 @@ import { Link } from "@chakra-ui/next-js";
 import { usePathname } from "next/navigation";
 import { MdPlaylistAdd } from "react-icons/md";
 import { BsBookmarkPlus } from "react-icons/bs";
-import { ImExit } from "react-icons/im";
+import { IoBookOutline } from "react-icons/io5";
 import { PiMapPinAreaDuotone } from "react-icons/pi";
 import { LuLayoutList } from "react-icons/lu";
 // import { RootState } from '../../redux/store';
@@ -105,14 +105,9 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           routeTo: "/admin/manage-slots",
         },
         {
-          name: "Bookings",
-          icon: MdPlaylistAdd,
+          name: "My bookings",
+          icon: IoBookOutline,
           routeTo: "/admin/bookings",
-        },
-        {
-          name: "Delete slot",
-          icon: RiDeleteBin4Line,
-          routeTo: "/admin/delete-slot",
         },
         {
           name: "Review",
@@ -136,14 +131,14 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           routeTo: "/user/reserve-slot",
         },
         {
+          name: "My bookings",
+          icon: IoBookOutline,
+          routeTo: "/user/my-bookings",
+        },
+        {
           name: "Review slot",
           icon: FaRegStar,
           routeTo: "/user/review",
-        },
-        {
-          name: "Exit parking slot",
-          icon: ImExit,
-          routeTo: "/user/exit-slot",
         },
       ]);
     }
