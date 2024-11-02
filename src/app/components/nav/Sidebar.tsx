@@ -105,7 +105,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           routeTo: "/admin/manage-slots",
         },
         {
-          name: "My bookings",
+          name: "Bookings",
           icon: IoBookOutline,
           routeTo: "/admin/bookings",
         },

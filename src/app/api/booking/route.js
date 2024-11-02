@@ -2,23 +2,75 @@ import { NextResponse } from "next/server";
 import Booking from "../../../../models/BookingModel";
 import { connectDB } from "../../../../utils/connect";
 import { isValid, parseISO } from "date-fns";
+import Slot from "../../../../models/SlotModel";
+import Area from "../../../../models/AreaModel";
+import User from "../../../../models/UserModel";
 
 export async function GET(req) {
-  try {
-    await connectDB();
-    const items = await Booking.find().populate("slot").sort({ createdAt: -1 });
+  // Parse the URL to access query parameters
+  const { searchParams } = new URL(req.url);
+  const userId = searchParams.get("userId");
+  const status = searchParams.get("status");
 
-    return NextResponse.json({
-      success: true,
-      data: items,
-    });
-  } catch (error) {
-    console.log(error);
-    return NextResponse.json({
-      success: false,
-      status: 500,
-      message: error?.message || "An error occurred while fetching Bookings",
-    });
+  if (!userId) {
+    try {
+      await connectDB();
+      let items;
+      if (status) {
+        items = await Booking.find({ bookingStatus: status })
+          .populate("slot")
+          .sort({ createdAt: -1 });
+      } else {
+        items = await Booking.find().populate("slot").sort({ createdAt: -1 });
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: items,
+      });
+    } catch (error) {
+      console.log(error);
+      return NextResponse.json({
+        success: false,
+        status: 500,
+        message: error?.message || "An error occurred while fetching Bookings",
+      });
+    }
+  } else {
+    try {
+      await connectDB();
+      let items;
+      if (status) {
+        items = await Booking.find({ user_id: userId, bookingStatus: status })
+          .populate({
+            path: "slot",
+            model: Slot,
+            populate: {
+              path: "user_id",
+              model: User,
+              select: "fullName",
+            },
+          })
+          // .populate("user_id")
+          .sort({ createdAt: -1 });
+      } else {
+        items = await Booking.find({ user_id: userId })
+          .populate("slot")
+          .sort({ createdAt: -1 });
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: items,
+      });
+    } catch (error) {
+      console.log(error);
+      return NextResponse.json({
+        success: false,
+        status: 500,
+        message: error?.message || "An error occurred while fetching Bookings",
+      });
+    }
   }
 }
 
@@ -39,6 +91,7 @@ export async function POST(req) {
       sectionIndex: sectionIndex,
       sectionSlotNumber: sectionSlotNumber,
     });
+    // TODO: status= booked or requested
     const activeBookingStatus = await Booking.findOne({
       user_id,
       bookingStatus: "booked",

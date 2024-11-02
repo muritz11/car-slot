@@ -121,7 +121,7 @@ const ReserveSlot = () => {
   };
 
   const fetchBookings = async () => {
-    const fetchItems = await fetch("/api/booking", {
+    const fetchItems = await fetch("/api/booking?status=booked", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -218,6 +218,7 @@ const ReserveSlot = () => {
         onPriceModalClose();
         onSuccessModalOpen();
         fetchSlots();
+        fetchBookings();
       } else {
         const err = await res.json();
         showError(`${err.message}`);

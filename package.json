@@ -17,6 +17,7 @@
     "cloudinary": "^2.5.1",
     "formidable": "^3.5.2",
     "framer-motion": "^11.11.8",
+    "luxon": "^3.5.0",
     "mongoose": "^8.7.1",
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0",

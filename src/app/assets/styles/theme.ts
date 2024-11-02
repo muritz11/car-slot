@@ -119,6 +119,7 @@ const theme = extendTheme({
       successTint: "#e4fff1",
       orange: "#F9A43F",
       textMuted: "#808080",
+      danger: "red.600",
       dangerTint: "red.100",
     },
   },
