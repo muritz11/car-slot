@@ -5,6 +5,7 @@ interface ISlot extends Document {
   sections: {
     title: string;
     numberOfSlots: number;
+    price: number;
   }[];
   createdAt?: Date;
   updatedAt?: Date;
@@ -23,6 +24,7 @@ const SlotSchema: Schema = new Schema(
         {
           title: String,
           numberOfSlots: Number,
+          price: Number,
         },
       ],
       required: [true, "Please provide sections"],

@@ -71,10 +71,10 @@ const components = {
         },
       },
       danger: {
-        bg: "brand.danger",
+        bg: "red.600",
         color: "brand.white",
         _hover: {
-          bg: "brand.dangerDark",
+          bg: "red.800",
         },
         _disabled: {
           _hover: {
@@ -119,6 +119,7 @@ const theme = extendTheme({
       successTint: "#e4fff1",
       orange: "#F9A43F",
       textMuted: "#808080",
+      dangerTint: "red.100",
     },
   },
   fonts: {

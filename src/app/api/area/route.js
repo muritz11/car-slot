@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import Area from "../../../../models/AreaModel";
+import Slot from "../../../../models/SlotModel";
 import { connectDB } from "../../../../utils/connect";
 
 export async function GET(req) {
@@ -56,59 +57,78 @@ export async function POST(req) {
 }
 
 export async function PUT(req) {
+  await connectDB();
+
+  const { title, location, areaId, coverUrl } = await req.json();
   try {
-    await connectDB();
-
-    const { title, location, areaId, coverUrl } = await req.json();
-    // const area = await Area.findOne({ id: areaId });
-    // if (exists) {
-    //   return NextResponse.json(
-    //     { message: "Area already exist" },
-    //     {
-    //       status: 400,
-    //     }
-    //   );
-    // }
-    try {
-      const area = await Area.updateOne(
-        { _id: areaId },
-        {
-          $set: {
-            title,
-            location,
-            coverUrl: coverUrl || undefined,
-          },
-        }
-      );
-
-      return NextResponse.json(
-        {
-          success: true,
-          message: "success",
-          data: area,
+    const area = await Area.updateOne(
+      { _id: areaId },
+      {
+        $set: {
+          title,
+          location,
+          coverUrl: coverUrl || undefined,
         },
-        {
-          status: 200,
-        }
-      );
-    } catch (error) {
-      return NextResponse.json(
-        {
-          success: true,
-          message: "success",
-          data: area,
-        },
-        {
-          status: 500,
-        }
-      );
-    }
-  } catch (error) {
-    console.log("Error while updating Area", error);
+      }
+    );
+
     return NextResponse.json(
       {
-        message: "An error occurred while updating the Area.",
+        success: true,
+        message: "success",
+        data: area,
       },
+      {
+        status: 200,
+      }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Faileds",
+        data: error,
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
+
+export async function DELETE(req) {
+  await connectDB();
+
+  const { areaId } = await req.json();
+
+  if (!areaId) {
+    return NextResponse.json({ error: "Area ID is required" }, { status: 400 });
+  }
+
+  try {
+    // Find and delete the slot by its ID
+    const deletedArea = await Area.findByIdAndDelete(areaId);
+
+    if (!deletedArea) {
+      return NextResponse.json(
+        { success: false, message: "Area not found" },
+        { status: 404 }
+      );
+    }
+    const deletedSlots = await Slot.deleteMany({ area: areaId });
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Area deleted successfully",
+        slot: deletedArea,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error deleting area:", error);
+    return NextResponse.json(
+      { message: "An error occurred while deleting the area" },
       { status: 500 }
     );
   }

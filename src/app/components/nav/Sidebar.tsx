@@ -27,6 +27,7 @@ import { MdPlaylistAdd } from "react-icons/md";
 import { BsBookmarkPlus } from "react-icons/bs";
 import { ImExit } from "react-icons/im";
 import { PiMapPinAreaDuotone } from "react-icons/pi";
+import { LuLayoutList } from "react-icons/lu";
 // import { RootState } from '../../redux/store';
 
 interface LinkItemProps {
@@ -99,9 +100,14 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           routeTo: "/admin/manage-area",
         },
         {
-          name: "Add slot",
+          name: "Manage slots",
+          icon: LuLayoutList,
+          routeTo: "/admin/manage-slots",
+        },
+        {
+          name: "Bookings",
           icon: MdPlaylistAdd,
-          routeTo: "/admin/add-slot",
+          routeTo: "/admin/bookings",
         },
         {
           name: "Delete slot",

@@ -1,12 +1,5 @@
 "use client";
-import {
-  Avatar,
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Text,
-} from "@chakra-ui/react";
+import { Avatar, Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import CustomInput from "../../../../../utils/CustomInput";
 import { useEffect, useState } from "react";
 import { showError, showSuccess } from "../../../../../utils/Alerts";
@@ -121,8 +114,8 @@ const ReserveSlot = () => {
     setSelectedSlotInfo({
       ...selectedSlotInfo,
       id: itemId,
-      title: selectedSlot?.area.title || "Area title",
-      location: selectedSlot?.area.location || "Area location",
+      title: selectedSlot?.area?.title || "Area title",
+      location: selectedSlot?.area?.location || "Area location",
     });
     setSections(selectedSlot?.sections || []);
     setPreview(selectedSlot?.area?.coverUrl);
@@ -256,10 +249,10 @@ const ReserveSlot = () => {
               {fetchedSlots?.map((item) => (
                 <MenuCard
                   key={item?._id}
-                  name={item?.area.title}
+                  name={item?.area?.title}
                   onClick={() => selectSlot(item?._id)}
-                  location={item.area.location}
-                  imgSrc={item.area.coverUrl || ""}
+                  location={item?.area?.location}
+                  imgSrc={item?.area?.coverUrl || ""}
                 />
               ))}
             </Flex>

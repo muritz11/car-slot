@@ -1,13 +1,5 @@
 "use client";
-import {
-  Heading,
-  Flex,
-  Input,
-  Box,
-  Text,
-  Button,
-  Icon,
-} from "@chakra-ui/react";
+import { Heading, Flex, Box, Text, Button, Icon } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import CustomInput from "../../../../../utils/CustomInput";
@@ -16,27 +8,25 @@ import { HiMiniTrash } from "react-icons/hi2";
 import { showError, showSuccess } from "../../../../../utils/Alerts";
 import { IArea } from "../manage-area/page";
 
-const areaItemArr = [{ label: "JCU library" }, { label: "John Grey Hall" }];
-
 const AddSlot = () => {
   const [isCreateSlotLoading, setIsCreateSlotLoading] = useState(false);
-  const [isFetchLoading, setIsFetchLoading] = useState(false);
   const [areaItemArr, setAreaItemArr] = useState<MenuItemsObj[]>([]);
   const [area, setArea] = useState("");
   const [sections, setSections] = useState<
     {
       title: string;
       numberOfSlots: number | string;
+      price: number | string;
     }[]
   >([
     {
       title: "",
       numberOfSlots: "",
+      price: "",
     },
   ]);
 
   const fetchAreas = async () => {
-    setIsFetchLoading(true);
     const fetchItems = await fetch("/api/area", {
       method: "GET",
       headers: {
@@ -54,7 +44,6 @@ const AddSlot = () => {
     } else {
       showError(res?.message || "An error occurred, could not fetch areas");
     }
-    setIsFetchLoading(false);
   };
 
   useEffect(() => {
@@ -67,6 +56,7 @@ const AddSlot = () => {
       {
         title: "",
         numberOfSlots: "",
+        price: "",
       },
     ];
 
@@ -91,6 +81,9 @@ const AddSlot = () => {
       filteredSections.forEach((val) => {
         if (!val.numberOfSlots) {
           fieldErr = "Enter number of slots";
+        }
+        if (!val.price) {
+          fieldErr = "Enter price";
         }
       });
 
@@ -122,9 +115,12 @@ const AddSlot = () => {
           {
             title: "",
             numberOfSlots: "",
+            price: "",
           },
         ]);
         showSuccess("Slot created successfully");
+        // @ts-ignore
+        window.location = "/admin/manage-slots";
       } else {
         const err = await res.json();
         showError(`${err.message}`);
@@ -147,7 +143,7 @@ const AddSlot = () => {
       py={"40px"}
     >
       <Heading as={"h3"} fontSize={"24px"} fontWeight={700} mb={"32px"}>
-        Slot Details
+        New Slot
       </Heading>
       <Box width={["full"]} mb={"22px"}>
         <Text fontWeight={500} mb={2}>
@@ -178,7 +174,7 @@ const AddSlot = () => {
             mb={"22px"}
             key={`scts-${idx}`}
           >
-            <Box width={{ base: "full", md: "47%" }}>
+            <Box width={{ base: "full", md: "31%" }}>
               <CustomInput
                 label="Title"
                 value={sect.title}
@@ -194,7 +190,7 @@ const AddSlot = () => {
                 greyInput={true}
               />
             </Box>
-            <Box width={{ base: "full", md: "47%" }}>
+            <Box width={{ base: "full", md: "31%" }}>
               <CustomInput
                 label="Number of slots"
                 value={sect.numberOfSlots}
@@ -205,6 +201,23 @@ const AddSlot = () => {
                   updatedArr[idx] = {
                     ...sect,
                     numberOfSlots: target.value,
+                  };
+                  setSections(updatedArr);
+                }}
+                greyInput={true}
+              />
+            </Box>
+            <Box width={{ base: "full", md: "31%" }}>
+              <CustomInput
+                label="Price (AUD)"
+                value={sect.price}
+                type={"number"}
+                placeholder="Enter price"
+                onChange={({ target }) => {
+                  let updatedArr = [...sections];
+                  updatedArr[idx] = {
+                    ...sect,
+                    price: target.value,
                   };
                   setSections(updatedArr);
                 }}

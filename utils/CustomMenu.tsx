@@ -90,6 +90,7 @@ const CustomMenu = ({
         {items.map((item, idx) => (
           <MenuItem
             key={`${item.label}-${idx}`}
+            background={item.value === value ? "blue.100" : "transparent"}
             onClick={() => setValue(item.value || item.label)}
           >
             {item.label}

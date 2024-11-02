@@ -5,25 +5,18 @@ import {
   Button,
   Flex,
   Heading,
-  Icon,
-  Input,
-  InputGroup,
   Text,
-  Image,
-  InputLeftElement,
-  InputRightElement,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-import { BsFillCheckCircleFill } from "react-icons/bs";
-import { FiPlus, FiSearch } from "react-icons/fi";
-import { HiOutlineCamera, HiPencil } from "react-icons/hi";
+import { FiPlus } from "react-icons/fi";
+import { HiOutlineCamera } from "react-icons/hi";
 import CustomInput from "../../../../../utils/CustomInput";
-import { LuSettings2 } from "react-icons/lu";
 import { useEffect, useRef, useState } from "react";
 import { showError, showSuccess } from "../../../../../utils/Alerts";
 import { truncateText } from "../../../../../utils/helpers";
 import { PiMapPinAreaDuotone } from "react-icons/pi";
 import Loader from "../../../../../utils/Loader";
+import CustomPrompt from "../../../../../utils/CustomPrompt";
 
 export interface IArea {
   _id: string;
@@ -39,7 +32,13 @@ const ManageSlot = () => {
   const [isFetchLoading, setIsFetchLoading] = useState(false);
   const [menuEditId, setMenuEditId] = useState<undefined | string>(undefined);
   const fileElement: { current: any } | null = useRef(null);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [fetchedAreas, setFetchedAreas] = useState<IArea[]>([]);
+  const {
+    isOpen: isDelPromptOpen,
+    onOpen: onDelPromptOpen,
+    onClose: onDelPromptClose,
+  } = useDisclosure();
   const [formState, setFormState] = useState({
     title: "",
     location: "",
@@ -136,6 +135,27 @@ const ManageSlot = () => {
   const resetMenuForm = () => {
     setMenuEditId(undefined);
     resetFormState();
+  };
+
+  const deleteItem = async () => {
+    setIsDeleteLoading(true);
+    const deleteItem = await fetch(`/api/area`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ areaId: menuEditId }),
+    });
+
+    const res = await deleteItem.json();
+    if (res?.success) {
+      showSuccess("Area deleted successfully");
+      fetchAreas();
+      onDelPromptClose();
+    } else {
+      showError(res?.message || "An error occurred, please try again later");
+    }
+    setIsDeleteLoading(false);
   };
 
   const handleSubmit = async () => {
@@ -389,8 +409,33 @@ const ManageSlot = () => {
           >
             {menuEditId ? "Update details" : "Add Area"}
           </Button>
+          {menuEditId ? (
+            <Button
+              size={"lg"}
+              mt={2}
+              width={"full"}
+              border={"1px solid"}
+              variant={"danger"}
+              borderRadius={"10px"}
+              color={"#fff"}
+              onClick={onDelPromptOpen}
+            >
+              Delete area
+            </Button>
+          ) : (
+            ""
+          )}
         </Box>
       </Flex>
+
+      <CustomPrompt
+        isOpen={isDelPromptOpen}
+        onClose={onDelPromptClose}
+        variant="danger"
+        action={`delete this area`}
+        primaryBtnAction={deleteItem}
+        isActionLoading={isDeleteLoading}
+      />
     </>
   );
 };
