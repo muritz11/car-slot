@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import CustomInput from "../../../../../utils/CustomInput";
 import { useEffect, useState } from "react";
-import { showError, showSuccess } from "../../../../../utils/Alerts";
+import { showError } from "../../../../../utils/Alerts";
 import { truncateText } from "../../../../../utils/helpers";
 import { PiMapPinAreaDuotone } from "react-icons/pi";
 import Loader from "../../../../../utils/Loader";
@@ -44,11 +44,12 @@ interface ISection {
   price: number;
 }
 
-interface IBooking {
+export interface IBooking {
   slot: ISlot;
   user_id: string;
   sectionIndex: number;
   sectionSlotNumber: number;
+  bookingStatus: string;
 }
 
 const ReserveSlot = () => {
@@ -121,7 +122,7 @@ const ReserveSlot = () => {
   };
 
   const fetchBookings = async () => {
-    const fetchItems = await fetch("/api/booking?status=booked", {
+    const fetchItems = await fetch("/api/booking?status=unavailable", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -183,7 +184,6 @@ const ReserveSlot = () => {
   const handleSubmit = async () => {
     const { slot, sectionIndex, sectionSlotNumber, bookingDate } = formState;
 
-    console.log(formState);
     if (!slot || typeof sectionIndex === "string") {
       showError("An error occurred");
       return;
@@ -601,8 +601,13 @@ const SectionUI = ({
 
   return (
     <Box mb={5}>
-      <Text textAlign={"center"} fontWeight={600} mb={2}>
-        Section {item.title}
+      <Text
+        textAlign={"center"}
+        fontWeight={600}
+        mb={2}
+        textTransform={"capitalize"}
+      >
+        Section: {item.title}
       </Text>
       <Flex justifyContent={"flex-start"} flexWrap={"wrap"} gap={3}>
         {slots.map((val) => (

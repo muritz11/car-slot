@@ -23,7 +23,6 @@ import { ISlot } from "../../user/reserve-slot/page";
 // @ts-ignore
 import { DateTime } from "luxon";
 import LabelStatus from "../../../../../utils/LabelStatus";
-import { ImExit } from "react-icons/im";
 import { MdCancel } from "react-icons/md";
 import CustomPrompt from "../../../../../utils/CustomPrompt";
 import { FaCheckCircle } from "react-icons/fa";

@@ -3,7 +3,6 @@ import Booking from "../../../../models/BookingModel";
 import { connectDB } from "../../../../utils/connect";
 import { isValid, parseISO } from "date-fns";
 import Slot from "../../../../models/SlotModel";
-import Area from "../../../../models/AreaModel";
 import User from "../../../../models/UserModel";
 
 export async function GET(req) {
@@ -17,9 +16,17 @@ export async function GET(req) {
       await connectDB();
       let items;
       if (status) {
-        items = await Booking.find({ bookingStatus: status })
-          .populate("slot")
-          .sort({ createdAt: -1 });
+        if (status === "unavailable") {
+          items = await Booking.find({
+            bookingStatus: { $in: ["booked", "unavailable"] },
+          })
+            .populate("slot")
+            .sort({ createdAt: -1 });
+        } else {
+          items = await Booking.find({ bookingStatus: status })
+            .populate("slot")
+            .sort({ createdAt: -1 });
+        }
       } else {
         items = await Booking.find().populate("slot").sort({ createdAt: -1 });
       }
@@ -90,15 +97,16 @@ export async function POST(req) {
       slot: slot,
       sectionIndex: sectionIndex,
       sectionSlotNumber: sectionSlotNumber,
+      bookingStatus: { $in: ["booked", "unavailable"] },
     });
     // TODO: status= booked or requested
     const activeBookingStatus = await Booking.findOne({
       user_id,
-      bookingStatus: "booked",
+      bookingStatus: { $in: ["booked", "exit-requested"] },
     });
     if (exists) {
       return NextResponse.json(
-        { message: "Slot has already been booked" },
+        { message: "Slot already booked or unavailable" },
         {
           status: 400,
         }

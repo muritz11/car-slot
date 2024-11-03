@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Model, Types } from "mongoose";
 
 interface IBooking extends Document {
   slot: Types.ObjectId;
-  user_id: Types.ObjectId;
+  user_id?: Types.ObjectId;
   sectionIndex: number;
   sectionSlotNumber: number;
   price?: number;
@@ -27,7 +27,6 @@ const BookingSchema: Schema = new Schema(
     user_id: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
     sectionIndex: {
       type: Number,

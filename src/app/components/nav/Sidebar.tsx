@@ -109,11 +109,6 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           icon: IoBookOutline,
           routeTo: "/admin/bookings",
         },
-        {
-          name: "Review",
-          icon: FaRegStar,
-          routeTo: "/admin/review",
-        },
       ]);
     }
 
@@ -134,11 +129,6 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           name: "My bookings",
           icon: IoBookOutline,
           routeTo: "/user/my-bookings",
-        },
-        {
-          name: "Review slot",
-          icon: FaRegStar,
-          routeTo: "/user/review",
         },
       ]);
     }
