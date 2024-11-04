@@ -18,6 +18,7 @@ import { IArea } from "../../manage-area/page";
 import { useParams } from "next/navigation";
 import Loader from "../../../../../../utils/Loader";
 import CustomPrompt from "../../../../../../utils/CustomPrompt";
+import ReviewModal from "@/app/(dashboard)/user/reserve-slot/ReviewModal";
 
 const UpdateSlot = () => {
   const params = useParams();
@@ -26,6 +27,11 @@ const UpdateSlot = () => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [areaItemArr, setAreaItemArr] = useState<MenuItemsObj[]>([]);
   const [area, setArea] = useState("");
+  const {
+    isOpen: isReviewModalOpen,
+    onOpen: onReviewModalOpen,
+    onClose: onReviewModalClose,
+  } = useDisclosure();
   const {
     isOpen: isDelPromptOpen,
     onOpen: onDelPromptOpen,
@@ -322,12 +328,20 @@ const UpdateSlot = () => {
 
           <Button
             width={"full"}
-            mt={10}
+            mt={5}
             variant={"primary"}
             onClick={handleSubmit}
             isLoading={isCreateSlotLoading}
           >
             Update
+          </Button>
+          <Button
+            width={"full"}
+            mt={5}
+            variant={"light"}
+            onClick={onReviewModalOpen}
+          >
+            Reviews
           </Button>
           <Button
             width={"full"}
@@ -349,6 +363,13 @@ const UpdateSlot = () => {
         action={`delete this slot`}
         primaryBtnAction={deleteItem}
         isActionLoading={isDeleteLoading}
+      />
+
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        slotId={typeof params.slotId === "string" ? params.slotId : ""}
+        onClose={onReviewModalClose}
+        fromAdmin={true}
       />
     </Box>
   );

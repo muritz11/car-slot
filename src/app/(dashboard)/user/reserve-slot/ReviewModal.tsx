@@ -22,11 +22,15 @@ import Loader from "../../../../../utils/Loader";
 import { ISlot } from "./page";
 // @ts-ignore
 import { DateTime } from "luxon";
+import { RiSeparator } from "react-icons/ri";
+import { FiEdit } from "react-icons/fi";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 interface ElemProp {
   isOpen: boolean;
   slotId: string;
   onClose: () => void;
+  fromAdmin?: boolean;
 }
 
 interface IRevew {
@@ -37,7 +41,7 @@ interface IRevew {
   updatedAt: any;
 }
 
-const ReviewModal = ({ isOpen, onClose, slotId }: ElemProp) => {
+const ReviewModal = ({ isOpen, onClose, slotId, fromAdmin }: ElemProp) => {
   const { data: session } = useSession();
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [isFetchLoading, setIsFetchLoading] = useState(false);
@@ -48,7 +52,7 @@ const ReviewModal = ({ isOpen, onClose, slotId }: ElemProp) => {
   });
 
   const fetchReviews = async () => {
-    if (slotId) {
+    if (slotId && session?.user) {
       setIsFetchLoading(true);
       const fetchItems = await fetch(`/api/review?slotId=${slotId}`, {
         method: "GET",
@@ -58,9 +62,8 @@ const ReviewModal = ({ isOpen, onClose, slotId }: ElemProp) => {
       });
 
       const res = await fetchItems.json();
-      if (res.ok) {
+      if (res?.success) {
         setFetchedReviews(res?.data);
-        console.log("first", res?.data);
       } else {
         showError("An error occurred, could not fetch reviews");
         console.log("An error occurred, could not fetch reviews", res);
@@ -71,7 +74,32 @@ const ReviewModal = ({ isOpen, onClose, slotId }: ElemProp) => {
 
   useEffect(() => {
     fetchReviews();
-  }, [slotId]);
+  }, [slotId, session?.user]);
+
+  const deleteItem = async (reviewId: string) => {
+    try {
+      const res = await fetch("/api/review", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          reviewId,
+        }),
+      });
+
+      if (res.ok) {
+        fetchReviews();
+        showSuccess("Review deleted successfully");
+      } else {
+        const err = await res.json();
+        showError(err?.message || "An error occurred");
+      }
+    } catch (error) {
+      console.log(error);
+      showError("Something went wrong");
+    }
+  };
 
   const handleSubmit = async () => {
     const { review } = formState;
@@ -100,11 +128,7 @@ const ReviewModal = ({ isOpen, onClose, slotId }: ElemProp) => {
         fetchReviews();
         showSuccess("Review submitted successfully");
         setformState({ review: "" });
-        // resetMenuForm();
-        // onPriceModalClose();
-        // onSuccessModalOpen();
-        // fetchSlots();
-        // fetchBookings();
+        setShowReviewForm(false);
       } else {
         const err = await res.json();
         showError(`${err.message}` || "An error occurred");
@@ -118,16 +142,24 @@ const ReviewModal = ({ isOpen, onClose, slotId }: ElemProp) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent borderRadius={"12px"}>
         <ModalHeader>Reviews</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Loader isLoading={isFetchLoading} height={"100px"} />
-
           {showReviewForm ? (
             <Flex direction={"column"} gap={3}>
+              <Flex>
+                <Button
+                  leftIcon={<IoMdArrowRoundBack />}
+                  variant={"ghost"}
+                  size={"sm"}
+                  onClick={() => setShowReviewForm(false)}
+                >
+                  Back to reviews
+                </Button>
+              </Flex>
               <FormControl>
                 <FormLabel fontWeight={500} color={"#48494D"}>
                   Write a review
@@ -141,7 +173,6 @@ const ReviewModal = ({ isOpen, onClose, slotId }: ElemProp) => {
                   onChange={(e) =>
                     setformState({ ...formState, review: e.target.value })
                   }
-                  placeholder={"Optional"}
                   minH={"150px"}
                 />
               </FormControl>
@@ -157,138 +188,82 @@ const ReviewModal = ({ isOpen, onClose, slotId }: ElemProp) => {
               </Button>
             </Flex>
           ) : (
-            <>
-              {fetchedReviews.map((review) => {
+            <Box mb={5}>
+              {fetchedReviews.map((review, idx) => {
                 const dateTime = DateTime.fromISO(review?.updatedAt);
                 // @ts-ignore
                 const date = dateTime.toRelativeCalendar();
 
                 return (
                   <Box key={review?._id}>
-                    <Box as="hr" my={4} />
+                    {idx !== 0 ? <Box as="hr" my={3} /> : ""}
                     <Flex align={"center"} gap={2}>
                       <Avatar
-                        name={review?.user?.fullName}
+                        src={undefined}
                         boxSize={"28px"}
                         fontSize={"8px"}
                       />
                       <Text textTransform={"capitalize"}>
                         {review?.user?.fullName}
                       </Text>
-                      {/* @ts-ignore */}
-                      {review?.user?._id === session?.user?.id ? (
-                        <Button
-                          variant={"link"}
-                          // onClick={() => deleteReview(review?._id)}
-                          size={"xs"}
-                          fontWeight={400}
-                          color={"red.600"}
-                          ms={4}
-                          // isLoading={isDeleteReviewLoading}
-                        >
-                          Delete
-                        </Button>
-                      ) : (
-                        ""
-                      )}
                     </Flex>
                     <Text fontSize={"14px"} my={2}>
                       {review?.review}
                     </Text>
-                    <Text fontSize={"12px"}>
-                      <em>Posted {date}</em>
-                    </Text>
-                  </Box>
-                );
-              })}
-              {fetchedReviews.map((review) => {
-                const dateTime = DateTime.fromISO(review?.updatedAt);
-                // @ts-ignore
-                const date = dateTime.toRelativeCalendar();
-
-                return (
-                  <Box key={review?._id}>
-                    <Box as="hr" my={4} />
                     <Flex align={"center"} gap={2}>
-                      <Avatar
-                        name={review?.user?.fullName}
-                        boxSize={"28px"}
-                        fontSize={"8px"}
-                      />
-                      <Text textTransform={"capitalize"}>
-                        {review?.user?.fullName}
+                      <Text fontSize={"12px"}>
+                        <em>Posted {date}</em>
                       </Text>
                       {/* @ts-ignore */}
                       {review?.user?._id === session?.user?.id ? (
-                        <Button
-                          variant={"link"}
-                          // onClick={() => deleteReview(review?._id)}
-                          size={"xs"}
-                          fontWeight={400}
-                          color={"red.600"}
-                          ms={4}
-                          // isLoading={isDeleteReviewLoading}
-                        >
-                          Delete
-                        </Button>
+                        <>
+                          <RiSeparator />
+                          <Button
+                            variant={"link"}
+                            onClick={() => deleteItem(review?._id)}
+                            size={"xs"}
+                            fontWeight={400}
+                            color={"red.600"}
+                            // isLoading={isDeleteReviewLoading}
+                          >
+                            Delete
+                          </Button>
+                        </>
                       ) : (
                         ""
                       )}
                     </Flex>
-                    <Text fontSize={"14px"} my={2}>
-                      {review?.review}
-                    </Text>
-                    <Text fontSize={"12px"}>
-                      <em>Posted {date}</em>
-                    </Text>
                   </Box>
                 );
               })}
-              {fetchedReviews.map((review) => {
-                const dateTime = DateTime.fromISO(review?.updatedAt);
-                // @ts-ignore
-                const date = dateTime.toRelativeCalendar();
-
-                return (
-                  <Box key={review?._id}>
-                    <Box as="hr" my={4} />
-                    <Flex align={"center"} gap={2}>
-                      <Avatar
-                        name={review?.user?.fullName}
-                        boxSize={"28px"}
-                        fontSize={"8px"}
-                      />
-                      <Text textTransform={"capitalize"}>
-                        {review?.user?.fullName}
-                      </Text>
-                      {/* @ts-ignore */}
-                      {review?.user?._id === session?.user?.id ? (
-                        <Button
-                          variant={"link"}
-                          // onClick={() => deleteReview(review?._id)}
-                          size={"xs"}
-                          fontWeight={400}
-                          color={"red.600"}
-                          ms={4}
-                          // isLoading={isDeleteReviewLoading}
-                        >
-                          Delete
-                        </Button>
-                      ) : (
-                        ""
-                      )}
-                    </Flex>
-                    <Text fontSize={"14px"} my={2}>
-                      {review?.review}
-                    </Text>
-                    <Text fontSize={"12px"}>
-                      <em>Posted {date}</em>
-                    </Text>
-                  </Box>
-                );
-              })}
-            </>
+              {!fetchedReviews?.length ? (
+                <Text
+                  color={"brand.textMuted"}
+                  textAlign={"center"}
+                  mt={7}
+                  mb={10}
+                >
+                  No reviews yet
+                </Text>
+              ) : (
+                ""
+              )}
+              {!fromAdmin ? (
+                <Button
+                  variant={"outline"}
+                  width={"full"}
+                  mt={5}
+                  rightIcon={<FiEdit />}
+                  onClick={() => setShowReviewForm(true)}
+                >
+                  Write review
+                </Button>
+              ) : (
+                ""
+              )}
+            </Box>
           )}
+          <Loader isLoading={isFetchLoading} height={"100px"} />
         </ModalBody>
       </ModalContent>
     </Modal>

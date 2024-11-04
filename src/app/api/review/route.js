@@ -75,3 +75,43 @@ export async function POST(req) {
     );
   }
 }
+
+export async function DELETE(req) {
+  await connectDB();
+
+  const { reviewId } = await req.json();
+
+  if (!reviewId) {
+    return NextResponse.json(
+      { error: "Review ID is required" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    // Find and delete the slot by its ID
+    const deletedReview = await Review.findByIdAndDelete(reviewId);
+
+    if (!deletedReview) {
+      return NextResponse.json(
+        { success: false, message: "Review not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Review deleted successfully",
+        slot: deletedReview,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error deleting review:", error);
+    return NextResponse.json(
+      { message: "An error occurred while deleting the review" },
+      { status: 500 }
+    );
+  }
+}
