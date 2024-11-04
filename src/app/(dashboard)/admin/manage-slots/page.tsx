@@ -203,7 +203,7 @@ const ManageSlots = () => {
                 slotId={val.slotId}
                 refetchBookings={fetchBookings}
                 // @ts-ignore
-                user_id={session?.user ? session?.user._id : ""}
+                user_id={session?.user ? session?.user.id : ""}
                 sectionIndex={val.sectionIndex}
                 key={`${val?.title + idx}`}
               />

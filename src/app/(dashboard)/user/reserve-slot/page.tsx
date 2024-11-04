@@ -29,6 +29,7 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { CiCircleCheck } from "react-icons/ci";
 import CustomDateTimePicker from "../../../../../utils/CustomDateTimePicker";
 import "react-datepicker/dist/react-datepicker.css";
+import ReviewModal from "./ReviewModal";
 
 export interface ISlot {
   _id: string;
@@ -59,6 +60,11 @@ const ReserveSlot = () => {
   const [fetchedBookings, setFetchedBookings] = useState<IBooking[]>([]);
   const [sections, setSections] = useState<ISection[]>([]);
   const { data: session } = useSession();
+  const {
+    isOpen: isReviewModalOpen,
+    onOpen: onReviewModalOpen,
+    onClose: onReviewModalClose,
+  } = useDisclosure();
   const {
     isOpen: isPriceModalOpen,
     onOpen: onPriceModalOpen,
@@ -372,6 +378,14 @@ const ReserveSlot = () => {
                     title={"Location"}
                     readOnly
                   />
+                  <Text
+                    mt={3}
+                    onClick={onReviewModalOpen}
+                    cursor={"pointer"}
+                    _hover={{ textDecor: "underline" }}
+                  >
+                    View reviews
+                  </Text>
                 </Box>
                 <Box mt={5}>
                   {sections.map((val, idx) => (
@@ -440,6 +454,12 @@ const ReserveSlot = () => {
           )}
         </Box>
       </Flex>
+
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        slotId={selectedSlotInfo.id}
+        onClose={onReviewModalClose}
+      />
 
       <Modal isOpen={isPriceModalOpen} onClose={onPriceModalClose}>
         <ModalOverlay />
