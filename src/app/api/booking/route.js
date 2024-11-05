@@ -4,6 +4,7 @@ import { connectDB } from "../../../../utils/connect";
 import { isValid, parseISO } from "date-fns";
 import Slot from "../../../../models/SlotModel";
 import User from "../../../../models/UserModel";
+import Area from "../../../../models/AreaModel";
 
 export async function GET(req) {
   // Parse the URL to access query parameters
@@ -20,15 +21,20 @@ export async function GET(req) {
           items = await Booking.find({
             bookingStatus: { $in: ["booked", "unavailable"] },
           })
-            .populate("slot")
+            .populate({ path: "slot", populate: { path: "area" } })
+            .populate("user_id")
             .sort({ createdAt: -1 });
         } else {
           items = await Booking.find({ bookingStatus: status })
-            .populate("slot")
+            .populate({ path: "slot", populate: { path: "area" } })
+            .populate("user_id")
             .sort({ createdAt: -1 });
         }
       } else {
-        items = await Booking.find().populate("slot").sort({ createdAt: -1 });
+        items = await Booking.find()
+          .populate({ path: "slot", populate: { path: "area" } })
+          .populate("user_id")
+          .sort({ createdAt: -1 });
       }
 
       return NextResponse.json({
@@ -49,20 +55,13 @@ export async function GET(req) {
       let items;
       if (status) {
         items = await Booking.find({ user_id: userId, bookingStatus: status })
-          .populate({
-            path: "slot",
-            model: Slot,
-            populate: {
-              path: "user_id",
-              model: User,
-              select: "fullName",
-            },
-          })
-          // .populate("user_id")
+          .populate({ path: "slot", populate: { path: "area" } })
+          .populate("user_id")
           .sort({ createdAt: -1 });
       } else {
         items = await Booking.find({ user_id: userId })
-          .populate("slot")
+          .populate({ path: "slot", populate: { path: "area" } })
+          .populate("user_id")
           .sort({ createdAt: -1 });
       }
 
@@ -87,6 +86,7 @@ export async function POST(req) {
 
     const {
       slot,
+      area,
       user_id,
       sectionIndex,
       sectionSlotNumber,
@@ -146,6 +146,7 @@ export async function POST(req) {
     await Booking.create({
       slot,
       user_id,
+      area,
       sectionIndex,
       sectionSlotNumber,
       price,

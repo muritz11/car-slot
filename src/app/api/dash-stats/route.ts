@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import Area from "../../../../models/AreaModel";
 import Booking from "../../../../models/BookingModel";
 import { connectDB } from "../../../../utils/connect";
+import mongoose from "mongoose";
 
 export async function GET(req: any) {
   // Parse the URL to access query parameters
@@ -85,7 +86,7 @@ export async function GET(req: any) {
         {
           $match: {
             bookingStatus: "completed",
-            user_id: userId,
+            user_id: new mongoose.Types.ObjectId(userId),
           },
         },
         {
@@ -95,7 +96,6 @@ export async function GET(req: any) {
           },
         },
       ]);
-      console.log("total exp", totalExpenditure);
       const bookingStats = await Booking.aggregate([
         // Match only bookings from the current year
         {

@@ -108,7 +108,7 @@ const MyBookings = () => {
         <Table variant="simple">
           <Thead>
             <Tr color={"#534D59"}>
-              <Th>Area name</Th>
+              <Th>Area</Th>
               <Th>Section</Th>
               <Th>Slot number</Th>
               <Th>Price</Th>
@@ -187,7 +187,7 @@ const RowItem = ({ val, refetch }: { val: IBooking; refetch: () => void }) => {
   return (
     <>
       <Tr>
-        <Td textTransform={"capitalize"}>{"area name"}</Td>
+        <Td textTransform={"capitalize"}>{val.slot.area.title}</Td>
         <Td textTransform={"capitalize"}>{section.title}</Td>
         <Td>
           <Flex

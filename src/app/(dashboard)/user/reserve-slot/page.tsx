@@ -60,6 +60,7 @@ const ReserveSlot = () => {
   const [fetchedBookings, setFetchedBookings] = useState<IBooking[]>([]);
   const [sections, setSections] = useState<ISection[]>([]);
   const { data: session } = useSession();
+
   const {
     isOpen: isReviewModalOpen,
     onOpen: onReviewModalOpen,
@@ -460,7 +461,6 @@ const ReserveSlot = () => {
         slotId={selectedSlotInfo.id}
         onClose={onReviewModalClose}
       />
-
       <Modal isOpen={isPriceModalOpen} onClose={onPriceModalClose}>
         <ModalOverlay />
         <ModalContent borderRadius={"12px"}>

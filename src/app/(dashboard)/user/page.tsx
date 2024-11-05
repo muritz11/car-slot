@@ -123,7 +123,7 @@ const User = () => {
             title="Booking expenditure"
             stat={`$${dashStats?.totalExpenditure}`}
             icon={LuCircleDollarSign}
-            route="/admin/bookings"
+            route="/user/my-bookings"
             iconColor={["#C3AAD5", "#4B0082"]}
           />
         </GridItem>
@@ -133,7 +133,7 @@ const User = () => {
             stat={dashStats?.completedBookings}
             icon={FaRegCheckCircle}
             iconColor={["#FAE6E5", "#534C4C"]}
-            route="/admin/bookings"
+            route="/user/my-bookings"
           />
         </GridItem>
         <GridItem>
@@ -142,7 +142,7 @@ const User = () => {
             stat={dashStats?.cancelledBookings}
             icon={TiCancel}
             iconColor={["#FFF4F0", "#FF8F6B"]}
-            route="/admin/bookings"
+            route="/user/my-bookings"
           />
         </GridItem>
         <GridItem>
@@ -151,7 +151,7 @@ const User = () => {
             stat={dashStats?.areaCount}
             icon={PiMapPinAreaDuotone}
             iconColor={["#FFF9E5", "#FFC400"]}
-            route="/admin/manage-area"
+            route="/user"
           />
         </GridItem>
       </Grid>

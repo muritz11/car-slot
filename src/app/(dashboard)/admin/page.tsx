@@ -155,21 +155,6 @@ const Admin = () => {
         px={"20px"}
         py={"13px"}
       >
-        <Flex
-          justifyContent={"space-between"}
-          align={"center"}
-          direction={{ base: "column", md: "row" }}
-          gap={"15px"}
-        >
-          <Heading
-            as={"h3"}
-            fontSize={"20px"}
-            fontWeight={700}
-            letterSpacing={"-2%"}
-          >
-            Order Statistics
-          </Heading>
-        </Flex>
         {/* bar chart */}
         <Box>
           <div id="chart">

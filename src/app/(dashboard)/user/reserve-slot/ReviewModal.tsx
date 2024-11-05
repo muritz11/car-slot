@@ -148,6 +148,7 @@ const ReviewModal = ({ isOpen, onClose, slotId, fromAdmin }: ElemProp) => {
         <ModalHeader>Reviews</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
+          <Loader isLoading={isFetchLoading} height={"100px"} />
           {showReviewForm ? (
             <Flex direction={"column"} gap={3}>
               <Flex>
@@ -263,7 +264,6 @@ const ReviewModal = ({ isOpen, onClose, slotId, fromAdmin }: ElemProp) => {
               )}
             </Box>
           )}
-          <Loader isLoading={isFetchLoading} height={"100px"} />
         </ModalBody>
       </ModalContent>
     </Modal>

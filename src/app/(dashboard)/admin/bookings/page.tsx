@@ -30,7 +30,7 @@ import { FaCheckCircle } from "react-icons/fa";
 interface IBooking {
   _id: string;
   slot: ISlot;
-  user_id: string;
+  user_id: { fullName: string };
   sectionIndex: number;
   sectionSlotNumber: number;
   price?: number;
@@ -182,7 +182,7 @@ const MyBookings = () => {
             <Thead>
               <Tr color={"#534D59"}>
                 <Th>User</Th>
-                <Th>Area name</Th>
+                <Th>Area</Th>
                 <Th>Section</Th>
                 <Th>Slot number</Th>
                 <Th>Price</Th>
@@ -272,8 +272,8 @@ const RowItem = ({ val, refetch }: { val: IBooking; refetch: () => void }) => {
   return (
     <>
       <Tr>
-        <Td textTransform={"capitalize"}>{"user"}</Td>
-        <Td textTransform={"capitalize"}>{"area name"}</Td>
+        <Td textTransform={"capitalize"}>{val?.user_id?.fullName}</Td>
+        <Td textTransform={"capitalize"}>{val.slot.area.title}</Td>
         <Td textTransform={"capitalize"}>{section.title}</Td>
         <Td>
           <Flex

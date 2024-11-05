@@ -18,10 +18,10 @@ const DashCard = ({
   route,
 }: CardProp) => {
   const routeTo = (url: string) => {
-    if (window) {
-      //   @ts-ignore
-      window.location = url;
-    }
+    // if (window) {
+    //   //   @ts-ignore
+    //   window.location = url;
+    // }
   };
 
   return (
@@ -37,12 +37,12 @@ const DashCard = ({
     >
       <Flex
         bg={iconColor[0]}
-        boxSize={"60px"}
+        boxSize={"50px"}
         rounded={"50%"}
         justify="center"
         align={"center"}
       >
-        <Icon as={icon} fontSize="24px" color={iconColor[1]} />
+        <Icon as={icon} fontSize="20px" color={iconColor[1]} />
       </Flex>
       <Flex direction={"column"}>
         <Text fontSize={"22px"} fontWeight={700}>
