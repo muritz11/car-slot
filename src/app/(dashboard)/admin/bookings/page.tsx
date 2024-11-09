@@ -220,7 +220,7 @@ const MyBookings = () => {
 const RowItem = ({ val, refetch }: { val: IBooking; refetch: () => void }) => {
   const [isLoading, setIsLoading] = useState(false);
   const deadline = DateTime.fromISO(val.bookingDate);
-  const section = val.slot.sections[val.sectionIndex];
+  const section = val?.slot?.sections[val.sectionIndex];
   const {
     isOpen: isGrantExitPromptOpen,
     onOpen: onGrantExitPromptOpen,
@@ -273,8 +273,8 @@ const RowItem = ({ val, refetch }: { val: IBooking; refetch: () => void }) => {
     <>
       <Tr>
         <Td textTransform={"capitalize"}>{val?.user_id?.fullName}</Td>
-        <Td textTransform={"capitalize"}>{val.slot.area.title}</Td>
-        <Td textTransform={"capitalize"}>{section.title}</Td>
+        <Td textTransform={"capitalize"}>{val?.slot?.area?.title || "N/A"}</Td>
+        <Td textTransform={"capitalize"}>{section?.title || "N/A"}</Td>
         <Td>
           <Flex
             boxSize={"25px"}
