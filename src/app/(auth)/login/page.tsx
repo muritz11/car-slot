@@ -29,8 +29,22 @@ const Login = () => {
     setFormState({ ...formState, [name]: value });
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  const signInAsUser = () => {
+    setFormState({
+      email: "max@yopmail.com",
+      password: "Pass1234$",
+    });
+  };
+
+  const signInAsAdmin = () => {
+    setFormState({
+      email: "maxinex@yopmail.com",
+      password: "Pass1234$",
+    });
+  };
+
+  const handleSubmit = async (e?: any) => {
+    e?.preventDefault();
     const { email, password } = formState;
 
     if (!email || !password) {
@@ -120,6 +134,14 @@ const Login = () => {
             onChange={handleInputs}
             mb="13px"
           />
+          <Flex justify={"center"} gap={4}>
+            <Button variant={"outline"} onClick={signInAsUser}>
+              Sign in as user
+            </Button>
+            <Button variant={"outline"} onClick={signInAsAdmin}>
+              Sign in as admin
+            </Button>
+          </Flex>
           <Button
             type="submit"
             variant={"primary"}

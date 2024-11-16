@@ -597,7 +597,7 @@ const SectionUI = ({
   useEffect(() => {
     const arr: number[] = [];
     const bks = bookings.filter(
-      (val) => val.slot._id === slotId && val.sectionIndex === sectionIndex
+      (val) => val?.slot?._id === slotId && val?.sectionIndex === sectionIndex
     );
     bks.forEach((val) => arr.push(val.sectionSlotNumber));
 
