@@ -1,6 +1,8 @@
+"use client";
 import React from "react";
 import { Flex, Icon, Text } from "@chakra-ui/react";
 import { IconType } from "react-icons";
+import { useRouter } from "next/navigation";
 
 interface CardProp {
   stat?: string | number | undefined;
@@ -17,11 +19,9 @@ const DashCard = ({
   iconColor = ["#FAE6E5", "brand.primary"],
   route,
 }: CardProp) => {
+  const router = useRouter();
   const routeTo = (url: string) => {
-    // if (window) {
-    //   //   @ts-ignore
-    //   window.location = url;
-    // }
+    router.push(url);
   };
 
   return (

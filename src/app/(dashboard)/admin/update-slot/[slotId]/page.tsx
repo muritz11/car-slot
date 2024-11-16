@@ -18,6 +18,7 @@ import { IArea } from "../../manage-area/page";
 import { useParams } from "next/navigation";
 import Loader from "../../../../../../utils/Loader";
 import CustomPrompt from "../../../../../../utils/CustomPrompt";
+import { useRouter } from "next/navigation";
 import ReviewModal from "@/app/(dashboard)/user/reserve-slot/ReviewModal";
 
 const UpdateSlot = () => {
@@ -25,6 +26,7 @@ const UpdateSlot = () => {
   const [isCreateSlotLoading, setIsCreateSlotLoading] = useState(false);
   const [isFetchLoading, setIsFetchLoading] = useState(true);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const router = useRouter();
   const [areaItemArr, setAreaItemArr] = useState<MenuItemsObj[]>([]);
   const [area, setArea] = useState("");
   const {
@@ -90,8 +92,7 @@ const UpdateSlot = () => {
       setSections(arr);
     } else {
       showError("An error occurred, could not fetch slot");
-      // @ts-ignore
-      window.location = "/admin/manage-slots";
+      router.push("/admin/manage-slots");
     }
     setIsFetchLoading(false);
   };
@@ -127,8 +128,7 @@ const UpdateSlot = () => {
     const res = await deleteItem.json();
     if (res?.success) {
       showSuccess("Slot deleted successfully");
-      // @ts-ignore
-      window.location = "/admin/manage-slots";
+      router.push("/admin/manage-slots");
     } else {
       showError(res?.message || "An error occurred, please try again later");
     }
@@ -183,8 +183,7 @@ const UpdateSlot = () => {
 
       if (res.ok) {
         showSuccess("Slot updated successfully");
-        // @ts-ignore
-        window.location = "/admin/manage-slots";
+        router.push("/admin/manage-slots");
       } else {
         const err = await res.json();
         showError(`${err.message}`);

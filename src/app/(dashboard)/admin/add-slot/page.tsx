@@ -6,12 +6,14 @@ import CustomInput from "../../../../../utils/CustomInput";
 import CustomMenu, { MenuItemsObj } from "../../../../../utils/CustomMenu";
 import { HiMiniTrash } from "react-icons/hi2";
 import { showError, showSuccess } from "../../../../../utils/Alerts";
+import { useRouter } from "next/navigation";
 import { IArea } from "../manage-area/page";
 
 const AddSlot = () => {
   const [isCreateSlotLoading, setIsCreateSlotLoading] = useState(false);
   const [areaItemArr, setAreaItemArr] = useState<MenuItemsObj[]>([]);
   const [area, setArea] = useState("");
+  const router = useRouter();
   const [sections, setSections] = useState<
     {
       title: string;
@@ -119,8 +121,7 @@ const AddSlot = () => {
           },
         ]);
         showSuccess("Slot created successfully");
-        // @ts-ignore
-        window.location = "/admin/manage-slots";
+        router.push("/admin/manage-slots");
       } else {
         const err = await res.json();
         showError(`${err.message}`);
