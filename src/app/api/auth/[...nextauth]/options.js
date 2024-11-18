@@ -8,7 +8,7 @@ async function login(credentials) {
     await connectDB();
     const user = await User.findOne({ email: credentials.email });
 
-    if (!user) throw new Error("Wrong credentials");
+    if (!user) throw new Error("Email does not exist");
     const isCorrect = await bcrypt.compare(credentials.password, user.password);
     if (!isCorrect) throw new Error("Wrong credentials");
     return user;
