@@ -8,6 +8,7 @@ A campus parking management application built with Next.js, enabling users to bo
 - NextJs
 - React
 - Chakra UI
+- NodeJs/Express
 - MongoDB
 - Next Auth
 - Next API routes
