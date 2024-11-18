@@ -1,14 +1,15 @@
 "use client";
 import DashCard from "@/app/components/DashCard";
-import { Box, Flex, Grid, GridItem, Heading } from "@chakra-ui/react";
+import { Box, Grid, GridItem } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { LuCircleDollarSign } from "react-icons/lu";
 import { PiMapPinAreaDuotone } from "react-icons/pi";
-import Chart from "react-apexcharts";
 import { showError } from "../../../../utils/Alerts";
 import { useSession } from "next-auth/react";
 import { TiCancel } from "react-icons/ti";
 import { FaRegCheckCircle } from "react-icons/fa";
+import dynamic from "next/dynamic";
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 interface IStat {
   totalExpenditure: number;

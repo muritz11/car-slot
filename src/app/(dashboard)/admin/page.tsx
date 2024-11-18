@@ -1,13 +1,14 @@
 "use client";
 import DashCard from "@/app/components/DashCard";
-import { Box, Flex, Grid, GridItem, Heading } from "@chakra-ui/react";
+import { Box, Grid, GridItem } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ImExit } from "react-icons/im";
 import { IoBookOutline } from "react-icons/io5";
 import { LuCircleDollarSign } from "react-icons/lu";
 import { PiMapPinAreaDuotone } from "react-icons/pi";
-import Chart from "react-apexcharts";
 import { showError } from "../../../../utils/Alerts";
+import dynamic from "next/dynamic";
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 interface IStat {
   earnings: number;
