@@ -102,8 +102,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               {session?.user?.email}
             </Text>
             {/* @ts-ignore */}
-            <Link href={`/${session?.user?.role}/settings`}>
-              <MenuItem>Profile</MenuItem>
+            <Link href={`/${session?.user?.role}`}>
+              <MenuItem>Dashboard</MenuItem>
             </Link>
             <MenuDivider />
             <MenuItem>Sign out</MenuItem>
